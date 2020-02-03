@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/service/account" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/service/arcticle" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/service/article" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/service/kratos-demo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/service/login" vcs="Git" />
+  </component>
+</project>
