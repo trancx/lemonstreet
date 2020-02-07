@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"kratos-demo/internal/model"
 
 	pb "kratos-demo/api"
 	"kratos-demo/internal/dao"
@@ -14,10 +15,11 @@ import (
 // Service service.
 type Service struct {
 	ac  *paladin.Map
-	dao dao.Dao
+	dao dao.Dao // interface, dao implement it !!
 }
 
-// New new a service and return.
+// New new a service and return
+// Trance: 此处接受了 mysql mc redis 三者融合的一个 dao，并初始化了 service
 func New(d dao.Dao) (s *Service, err error) {
 	s = &Service{
 		ac:  &paladin.TOML{},
@@ -51,4 +53,14 @@ func (s *Service) Ping(ctx context.Context, e *empty.Empty) (*empty.Empty, error
 // Close close the resource.
 func (s *Service) Close() {
 	s.dao.Close()
+}
+
+func (s *Service) Info(c context.Context, id int64) (res *model.UserInfo, err error) {
+	res, err = s.dao.UserInfoID(c, id)
+	return
+}
+
+func (s *Service) InfoName(c context.Context, name string) (res *model.UserInfo, err error) {
+	res, err = s.dao.UserInfoName(c, name)
+	return
 }

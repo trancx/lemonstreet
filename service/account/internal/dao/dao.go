@@ -4,13 +4,13 @@ import (
 	"context"
 	"time"
 
-	"kratos-demo/internal/model"
 	"github.com/bilibili/kratos/pkg/cache/memcache"
 	"github.com/bilibili/kratos/pkg/cache/redis"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/database/sql"
 	"github.com/bilibili/kratos/pkg/sync/pipeline/fanout"
 	xtime "github.com/bilibili/kratos/pkg/time"
+	"kratos-demo/internal/model"
 )
 
 //go:generate kratos tool genbts
@@ -18,8 +18,15 @@ import (
 type Dao interface {
 	Close()
 	Ping(ctx context.Context) (err error)
-	// bts: -nullcache=&model.Article{ID:-1} -check_null_code=$!=nil&&$.ID==-1
-	Article(c context.Context, id int64) (*model.Article, error)
+	// bts: -nullcache=&model.UserInfo{UserID:-1} -check_null_code=$!=nil&&$.UserID==-1
+	UserInfoID(c context.Context, id int64) (*model.UserInfo, error)
+	// bts: -nullcache=&model.UserInfo{UserID:-1} -check_null_code=$!=nil&&$.UserID==-1
+	UserInfoName(c context.Context, name string) (*model.UserInfo, error)
+	SetUserInfo(c context.Context, info *model.UserInfo) error
+	UpadateAvatar(c context.Context, id int64, avatar string) error
+	UpadateDesc(c context.Context, id int64, desc string) error
+	UpadateGender(c context.Context, id int64, gender string) error
+	UpadateMail(c context.Context, id int64, mail string) error
 }
 
 // dao dao.
@@ -27,7 +34,7 @@ type dao struct {
 	db          *sql.DB
 	redis       *redis.Redis
 	mc          *memcache.Memcache
-	cache *fanout.Fanout
+	cache 		*fanout.Fanout
 	demoExpire int32
 }
 
@@ -46,6 +53,7 @@ func New(r *redis.Redis, mc *memcache.Memcache, db *sql.DB) (d Dao, err error) {
 		cache: fanout.New("cache"),
 		demoExpire: int32(time.Duration(cfg.DemoExpire) / time.Second),
 	}
+
 	return
 }
 

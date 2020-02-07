@@ -4,12 +4,12 @@
   Package dao is a generated mc cache package.
   It is generated from:
   type _mc interface {
-		// mc: -key=keyArt -type=get
-		CacheArticle(c context.Context, id int64) (*model.Article, error)
-		// mc: -key=keyArt -expire=d.demoExpire
-		AddCacheArticle(c context.Context, id int64, art *model.Article) (err error)
-		// mc: -key=keyArt
-		DeleteArticleCache(c context.Context, id int64) (err error)
+		// mc: -key=keyInfo -type=get
+		CacheUserInfo(c context.Context, key interface{}) (*model.UserInfo, error)
+		// mc: -key=keyInfo -expire=d.demoExpire
+		AddCacheUserInfo(c context.Context, key interface{}, art *model.UserInfo) (err error)
+		// mc: -key=keyInfo
+		DeleteUserInfoCache(c context.Context, key interface{}) (err error)
 	}
 */
 
@@ -26,10 +26,10 @@ import (
 
 var _ _mc
 
-// CacheArticle get data from mc
-func (d *dao) CacheArticle(c context.Context, id int64) (res *model.Article, err error) {
-	key := keyArt(id)
-	res = &model.Article{}
+// CacheUserInfo get data from mc
+func (d *dao) CacheUserInfo(c context.Context, id interface{}) (res *model.UserInfo, err error) {
+	key := keyInfo(id)
+	res = &model.UserInfo{}
 	if err = d.mc.Get(c, key).Scan(res); err != nil {
 		res = nil
 		if err == memcache.ErrNotFound {
@@ -37,35 +37,35 @@ func (d *dao) CacheArticle(c context.Context, id int64) (res *model.Article, err
 		}
 	}
 	if err != nil {
-		log.Errorv(c, log.KV("CacheArticle", fmt.Sprintf("%+v", err)), log.KV("key", key))
+		log.Errorv(c, log.KV("CacheUserInfo", fmt.Sprintf("%+v", err)), log.KV("key", key))
 		return
 	}
 	return
 }
 
-// AddCacheArticle Set data to mc
-func (d *dao) AddCacheArticle(c context.Context, id int64, val *model.Article) (err error) {
+// AddCacheUserInfo Set data to mc
+func (d *dao) AddCacheUserInfo(c context.Context, id interface{}, val *model.UserInfo) (err error) {
 	if val == nil {
 		return
 	}
-	key := keyArt(id)
+	key := keyInfo(id)
 	item := &memcache.Item{Key: key, Object: val, Expiration: d.demoExpire, Flags: memcache.FlagJSON}
 	if err = d.mc.Set(c, item); err != nil {
-		log.Errorv(c, log.KV("AddCacheArticle", fmt.Sprintf("%+v", err)), log.KV("key", key))
+		log.Errorv(c, log.KV("AddCacheUserInfo", fmt.Sprintf("%+v", err)), log.KV("key", key))
 		return
 	}
 	return
 }
 
-// DeleteArticleCache delete data from mc
-func (d *dao) DeleteArticleCache(c context.Context, id int64) (err error) {
-	key := keyArt(id)
+// DeleteUserInfoCache delete data from mc
+func (d *dao) DeleteUserInfoCache(c context.Context, id interface{}) (err error) {
+	key := keyInfo(id)
 	if err = d.mc.Delete(c, key); err != nil {
 		if err == memcache.ErrNotFound {
 			err = nil
 			return
 		}
-		log.Errorv(c, log.KV("DeleteArticleCache", fmt.Sprintf("%+v", err)), log.KV("key", key))
+		log.Errorv(c, log.KV("DeleteUserInfoCache", fmt.Sprintf("%+v", err)), log.KV("key", key))
 		return
 	}
 	return

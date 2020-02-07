@@ -3,6 +3,8 @@ package dao
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"strings"
 
 	"kratos-demo/internal/model"
 	"github.com/bilibili/kratos/pkg/cache/memcache"
@@ -12,12 +14,12 @@ import (
 
 //go:generate kratos tool genmc
 type _mc interface {
-	// mc: -key=keyArt -type=get
-	CacheArticle(c context.Context, id int64) (*model.Article, error)
-	// mc: -key=keyArt -expire=d.demoExpire
-	AddCacheArticle(c context.Context, id int64, art *model.Article) (err error)
-	// mc: -key=keyArt
-	DeleteArticleCache(c context.Context, id int64) (err error)
+	// mc: -key=keyInfo -type=get
+	CacheUserInfo(c context.Context, key interface{}) (*model.UserInfo, error)
+	// mc: -key=keyInfo -expire=d.demoExpire
+	AddCacheUserInfo(c context.Context, key interface{}, art *model.UserInfo) (err error)
+	// mc: -key=keyInfo
+	DeleteUserInfoCache(c context.Context, key interface{}) (err error)
 }
 
 func NewMC() (mc *memcache.Memcache, err error) {
@@ -38,6 +40,11 @@ func (d *dao) PingMC(ctx context.Context) (err error) {
 	return
 }
 
-func keyArt(id int64) string {
-	return fmt.Sprintf("art_%d", id)
+// FIXME: what if the id is the same to name?
+func keyInfo(key interface{}) string {
+	if strings.EqualFold(reflect.TypeOf(key).String(), "int") {
+		return fmt.Sprintf("user_%d", key)
+	} else {
+		return fmt.Sprintf("user_%s", key)
+	}
 }

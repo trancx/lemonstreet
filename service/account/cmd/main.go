@@ -16,7 +16,7 @@ func main() {
 	flag.Parse()
 	log.Init(nil) // debug flag: log.dir={path}
 	defer log.Close()
-	log.Info("kratos-demo start")
+	log.Info("lemonstreet-account service start")
 	paladin.Init()
 	_, closeFunc, err := di.InitApp()
 	if err != nil {
@@ -30,7 +30,7 @@ func main() {
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			closeFunc()
-			log.Info("kratos-demo exit")
+			log.Info("lemonstreet-account service  exit")
 			time.Sleep(time.Second)
 			return
 		case syscall.SIGHUP:
