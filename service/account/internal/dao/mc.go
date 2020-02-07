@@ -42,9 +42,9 @@ func (d *dao) PingMC(ctx context.Context) (err error) {
 
 // FIXME: what if the id is the same to name?
 func keyInfo(key interface{}) string {
-	if strings.EqualFold(reflect.TypeOf(key).String(), "int") {
-		return fmt.Sprintf("user_%d", key)
-	} else {
+	if strings.Compare(reflect.TypeOf(key).String(), "string") == 0 {
 		return fmt.Sprintf("user_%s", key)
+	} else {
+		return fmt.Sprintf("user_%d", key)
 	}
 }

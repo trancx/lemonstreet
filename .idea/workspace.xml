@@ -2,22 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5d7fc819-98d9-4a64-b428-21c8d565b2a9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/account/cmd/cmd" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/cmd/cmd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/cmd/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/configs/db.toml" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/configs/db.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/internal/dao/dao.bts.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/dao/dao.bts.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/account/internal/dao/dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/dao/dao.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/internal/dao/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/dao/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/internal/dao/mc.cache.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/dao/mc.cache.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/account/internal/dao/mc.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/dao/mc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/internal/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/model/model.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/account/internal/dao/update.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/dao/update.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/account/internal/server/http/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/server/http/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/account/internal/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/service/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/model/model.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

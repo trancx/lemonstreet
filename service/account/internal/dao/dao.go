@@ -23,10 +23,10 @@ type Dao interface {
 	// bts: -nullcache=&model.UserInfo{UserID:-1} -check_null_code=$!=nil&&$.UserID==-1
 	UserInfoName(c context.Context, name string) (*model.UserInfo, error)
 	SetUserInfo(c context.Context, info *model.UserInfo) error
-	UpadateAvatar(c context.Context, id int64, avatar string) error
-	UpadateDesc(c context.Context, id int64, desc string) error
-	UpadateGender(c context.Context, id int64, gender string) error
-	UpadateMail(c context.Context, id int64, mail string) error
+	UpdateAvatar(c context.Context, id int64, avatar string) error
+	UpdateDesc(c context.Context, id int64, desc string) error
+	UpdateGender(c context.Context, id int64, gender string) error
+	UpdateMail(c context.Context, id int64, mail string) error
 }
 
 // dao dao.
