@@ -56,7 +56,7 @@ func (s *Service) Close() {
 }
 
 func (s *Service) Info(c context.Context, id int64) (res *model.UserInfo, err error) {
-	_ = s.dao.UpdateAvatar(c, id, "old")
+	//_ = s.dao.UpdateAvatar(c, id, "old")
 	res, err = s.dao.UserInfoID(c, id)
 	//_ = s.dao.UpdateDesc(c, id, "update")
 	//_ = s.dao.UpdateGender(c, id, "f")
@@ -73,4 +73,8 @@ func (s *Service) InfoName(c context.Context, name string) (res *model.UserInfo,
 func (s *Service) Account(c context.Context, info *model.UserInfo) (err error) {
 	err = s.dao.SetUserInfo(c, info)
 	return
+}
+
+func (s *Service) Search(c context.Context, q string) (infos []model.UserInfo, err error) {
+	return s.dao.SearchUserInfoByName(c, q)
 }

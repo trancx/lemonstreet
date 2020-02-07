@@ -45,6 +45,7 @@ func initRouter(e *bm.Engine) {
 	{
 		g.GET("/info", info)
 		g.GET("infobyname", infoName)
+		g.GET("/search", search)
 	}
 }
 
@@ -60,16 +61,9 @@ func info(c *bm.Context) {
 	// 解析 json -> go-model -> dao -> context
 	res, err := accSvc.Info(c,27182818285)
 
-	res.Name = "newone"
-	res.UserID = 23333
-	res.Tel = "1010101"
-	res.Mail = "w@q.com"
-
-	err = accSvc.Account(c, res)
 	if err != nil {
 		fmt.Println("%v!", err)
 	}
-	res, err = accSvc.Info(c,23333)
 
 	c.JSON(res, nil)
 }
@@ -81,6 +75,26 @@ func infoName(c *bm.Context) {
 	if err != nil {
 		fmt.Println("error!")
 	}
+
+	c.JSON(res, nil)
+}
+
+func search(c *bm.Context) {
+	var (
+		q string
+	)
+
+	q = c.Request.URL.Query().Get("q")
+	// 解析 json -> go-model -> dao -> context
+	res, err := accSvc.Search(c,q)
+
+	if err != nil {
+		fmt.Println("error!")
+	}
+
+
+	fmt.Println(len(res))
+
 
 	c.JSON(res, nil)
 }

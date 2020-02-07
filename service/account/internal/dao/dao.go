@@ -27,6 +27,7 @@ type Dao interface {
 	UpdateDesc(c context.Context, id int64, desc string) error
 	UpdateGender(c context.Context, id int64, gender string) error
 	UpdateMail(c context.Context, id int64, mail string) error
+	SearchUserInfoByName(c context.Context, name string) (infos []model.UserInfo, err error)
 }
 
 // dao dao.
