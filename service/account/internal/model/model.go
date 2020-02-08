@@ -1,5 +1,9 @@
 package model
 
+import (
+	pb "account/api"
+)
+
 // Kratos hello kratos.
 type Kratos struct {
 	Hello string
@@ -31,13 +35,13 @@ type UserInfo struct {
 	 CreatedDate	string
 }
 
-func (info *UserInfo) ToBaseInfo() *UserBaseInfo {
-	return &UserBaseInfo{
-		UserID:      info.UserID,
+func (info *UserInfo) ToBaseInfo() *pb.UserBaseInfo {
+	return &pb.UserBaseInfo{
+		Uid:      info.UserID,
 		Name:        info.Name,
 		Gender:      info.Gender,
 		Avatar:      info.Avatar,
-		Description: info.Description,
-		CreatedDate: info.CreatedDate,
+		Desc: info.Description,
+		Created: info.CreatedDate,
 	}
 }

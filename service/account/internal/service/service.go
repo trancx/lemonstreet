@@ -2,12 +2,12 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"kratos-demo/internal/model"
+	"github.com/prometheus/common/log"
+	"account/internal/model"
 
-	pb "kratos-demo/api"
-	"kratos-demo/internal/dao"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
+	pb "account/api"
+	"account/internal/dao"
 
 	"github.com/golang/protobuf/ptypes/empty"
 )
@@ -16,6 +16,76 @@ import (
 type Service struct {
 	ac  *paladin.Map
 	dao dao.Dao // interface, dao implement it !!
+}
+
+func (s *Service) BaseInfoByName(c context.Context, req *pb.NameReq) (reply *pb.BaseInfoReply, err error) {
+	res, err := s.dao.UserInfoName(c, req.Name)
+	if err != nil {
+		log.Errorf("rpc InfoByName faile (%v)", err)
+		return
+	}
+	reply = &pb.BaseInfoReply{
+		Info:	res.ToBaseInfo(),
+	}
+	return
+}
+
+func (s *Service) BaseInfosByName(c context.Context, req *pb.NamesReq) (reply *pb.BaseInfosReply, err error) {
+	var (
+		names 	[]string
+		infos	[]*pb.UserBaseInfo
+		temp	*model.UserInfo
+	)
+	names = req.Names
+	infos = []*pb.UserBaseInfo{}
+	for _, name := range names {
+		temp, err = s.dao.UserInfoName(c, name)
+		if err != nil {
+			reply = nil
+			log.Errorf("Service BaseInfosByName failed (%v)", err)
+			return
+		}
+		infos = append(infos, temp.ToBaseInfo())
+	}
+	reply = &pb.BaseInfosReply{
+		Infos:                infos,
+	}
+	return
+}
+
+func (s *Service) BaseInfo(c context.Context, req *pb.UidReq) (reply *pb.BaseInfoReply, err error) {
+	res, err := s.dao.UserInfoID(c, req.Uid)
+	if err != nil {
+		log.Errorf("rpc InfoByName failed (%v)", err)
+		return
+	}
+	reply = &pb.BaseInfoReply {
+		Info:	res.ToBaseInfo(),
+	}
+	return
+}
+
+func (s *Service) SearchBaseInfoByName(c context.Context, req *pb.NameReq) (reply *pb.BaseInfosReply, err error) {
+	var (
+		name 	string
+		infos  	[]*pb.UserBaseInfo
+		raws	[]model.UserInfo
+	)
+	name = req.Name
+	infos = []*pb.UserBaseInfo{}
+
+	raws, err = s.dao.SearchUserInfoByName(c, name)
+	if err != nil {
+		log.Errorf("rpc SearchInfoByName failed (%v)", err)
+		return
+	}
+	for _, temp := range raws {
+		infos = append(infos, temp.ToBaseInfo())
+	}
+	reply = &pb.BaseInfosReply{
+		Infos:                infos,
+	}
+	return
 }
 
 // New new a service and return
@@ -29,22 +99,6 @@ func New(d dao.Dao) (s *Service, err error) {
 	return
 }
 
-// SayHello grpc demo func.
-func (s *Service) SayHello(ctx context.Context, req *pb.HelloReq) (reply *empty.Empty, err error) {
-	reply = new(empty.Empty)
-	fmt.Printf("hello %s", req.Name)
-	return
-}
-
-// SayHelloURL bm demo func.
-func (s *Service) SayHelloURL(ctx context.Context, req *pb.HelloReq) (reply *pb.HelloResp, err error) {
-	reply = &pb.HelloResp{
-		Content: "hello " + req.Name,
-	}
-	fmt.Printf("hello url %s", req.Name)
-	return
-}
-
 // Ping ping the resource.
 func (s *Service) Ping(ctx context.Context, e *empty.Empty) (*empty.Empty, error) {
 	return &empty.Empty{}, s.dao.Ping(ctx)
@@ -55,7 +109,7 @@ func (s *Service) Close() {
 	s.dao.Close()
 }
 
-func (s *Service) Info(c context.Context, id int64) (res *model.UserInfo, err error) {
+func (s *Service) Info1(c context.Context, id int64) (res *model.UserInfo, err error) {
 	//_ = s.dao.UpdateAvatar(c, id, "old")
 	res, err = s.dao.UserInfoID(c, id)
 	//_ = s.dao.UpdateDesc(c, id, "update")

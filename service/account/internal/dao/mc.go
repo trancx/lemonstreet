@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"kratos-demo/internal/model"
+	"account/internal/model"
 	"github.com/bilibili/kratos/pkg/cache/memcache"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"

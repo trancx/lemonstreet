@@ -10,7 +10,7 @@ import (
 	"github.com/bilibili/kratos/pkg/database/sql"
 	"github.com/bilibili/kratos/pkg/sync/pipeline/fanout"
 	xtime "github.com/bilibili/kratos/pkg/time"
-	"kratos-demo/internal/model"
+	"account/internal/model"
 )
 
 //go:generate kratos tool genbts
@@ -54,7 +54,6 @@ func New(r *redis.Redis, mc *memcache.Memcache, db *sql.DB) (d Dao, err error) {
 		cache: fanout.New("cache"),
 		demoExpire: int32(time.Duration(cfg.DemoExpire) / time.Second),
 	}
-
 	return
 }
 

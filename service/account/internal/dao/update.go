@@ -5,7 +5,7 @@ import (
 	"github.com/bilibili/kratos/pkg/cache"
 	"github.com/bilibili/kratos/pkg/log"
 
-	"kratos-demo/internal/model"
+	"account/internal/model"
 )
 
 const (

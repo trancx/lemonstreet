@@ -6,7 +6,7 @@ import (
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/database/sql"
 	"github.com/bilibili/kratos/pkg/log"
-	"kratos-demo/internal/model"
+	"account/internal/model"
 )
 
 const (
@@ -24,16 +24,11 @@ func NewDB() (db *sql.DB, err error) {
 	if err = paladin.Get("db.toml").UnmarshalTOML(&cfg); err != nil {
 		return
 	}
-	//fmt.Println(cfg.Client)
-	//info := model.UserInfo{}
-	//id := 27182818285
 	db = sql.NewMySQL(cfg.Client)
 	err = db.Ping(context.Background())
 	if err != nil {
 		panic(err)
 	}
-	//err = db.QueryRow(nil, _selUserInfoID, id).Scan(&info.UserID, &info.Name, &info.Mail, &info.Gender, &info.Avatar, &info.CreatedDate)
-	//fmt.Println(info)
 	return
 }
 

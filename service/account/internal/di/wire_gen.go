@@ -7,11 +7,10 @@ package di
 
 import (
 	"github.com/google/wire"
-	"kratos-demo/api"
-	"kratos-demo/internal/dao"
-	"kratos-demo/internal/server/grpc"
-	"kratos-demo/internal/server/http"
-	"kratos-demo/internal/service"
+	"account/internal/dao"
+	"account/internal/server/grpc"
+	"account/internal/server/http"
+	"account/internal/service"
 )
 
 // Injectors from wire.go:
@@ -58,4 +57,4 @@ func InitApp() (*App, func(), error) {
 
 var daoProvider = wire.NewSet(dao.New, dao.NewDB, dao.NewRedis, dao.NewMC)
 
-var serviceProvider = wire.NewSet(service.New, wire.Bind(new(api.DemoServer), new(*service.Service)))
+var serviceProvider = wire.NewSet(service.New, new(*service.Service))

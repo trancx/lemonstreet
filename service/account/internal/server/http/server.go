@@ -1,6 +1,7 @@
 package http
 
 import (
+	"account/internal/model"
 	"fmt"
 	"net/http"
 
@@ -8,7 +9,7 @@ import (
 	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 
-	"kratos-demo/internal/service"
+	"account/internal/service"
 )
 
 //var accSvc pb.DemoServer
@@ -39,14 +40,26 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 	return
 }
 
+// domain/[:username]
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	g := e.Group("/api/account")
-	{
-		g.GET("/info", info)
-		g.GET("infobyname", infoName)
-		g.GET("/search", search)
+	//g := e.Group("/api/account")
+	//{
+	//	g.GET("/info", info)
+	//	g.GET("infobyname", infoName)
+	//	g.GET("/search", search)
+	//}
+	e.GET("/api/:user", test)
+}
+
+// example for http request handler.
+func test(c *bm.Context) {
+	res := c.Request.URL.Query().Get("user")
+	reply := model.UserInfo{
+		Name:	res,
 	}
+
+	c.JSON(&reply, nil)
 }
 
 func ping(ctx *bm.Context) {
@@ -59,7 +72,7 @@ func ping(ctx *bm.Context) {
 // example for http request handler.
 func info(c *bm.Context) {
 	// 解析 json -> go-model -> dao -> context
-	res, err := accSvc.Info(c,27182818285)
+	res, err := accSvc.Info1(c,27182818285)
 
 	if err != nil {
 		fmt.Println("%v!", err)

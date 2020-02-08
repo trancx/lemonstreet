@@ -8,27 +8,51 @@ import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 
 // package 命名使用 {appid}.{version} 的方式, version 形如 v1, v2 ..
-package demo.service.v1;
+package account.service;
 
 // NOTE: 最后请删除这些无用的注释 (゜-゜)つロ 
 
 option go_package = "api";
 option (gogoproto.goproto_getters_all) = false;
 
-service Demo {
+message UserBaseInfo {
+    int64  uid = 1 [(gogoproto.jsontag) = "uid"];
+    string name = 2 [(gogoproto.jsontag) = "name"];
+    string gender = 3 [(gogoproto.jsontag) = "gender"];
+    string avatar = 4 [(gogoproto.jsontag) = "avatar"];
+    string desc = 5 [(gogoproto.jsontag) = "desc"];
+    string created = 6 [(gogoproto.jsontag) = "created"];
+}
+
+
+message UidReq {
+  int64 uid = 1;
+  string real_ip = 2;
+}
+
+message NameReq {
+  string name = 1;
+  string real_ip = 2;
+}
+
+message NamesReq {
+  repeated string names = 1
+      [(gogoproto.moretags) = "validate:\"gt=0,dive,gt=0\""];
+  string real_ip = 2;
+}
+
+message BaseInfoReply {
+    UserBaseInfo info = 1;
+}
+
+message BaseInfosReply {
+   repeated UserBaseInfo infos = 1;
+}
+
+service Account {
     rpc Ping (.google.protobuf.Empty) returns (.google.protobuf.Empty);
-	rpc SayHello (HelloReq) returns (.google.protobuf.Empty);
-	rpc SayHelloURL(HelloReq) returns (HelloResp) {
-        option (google.api.http) = {
-            get:"/kratos-demo/say_hello"
-        };
-    };
-}
-
-message HelloReq {
-	string name = 1 [(gogoproto.moretags)='form:"name" validate:"required"'];
-}
-
-message HelloResp {
-    string Content = 1 [(gogoproto.jsontag) = 'content'];
+    rpc BaseInfoByName (NameReq) returns (BaseInfoReply);
+    rpc BaseInfosByName (NamesReq) returns (BaseInfosReply);
+    rpc BaseInfo(UidReq) returns (BaseInfoReply);
+    rpc SearchBaseInfoByName (NameReq) returns (BaseInfosReply);
 }
