@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	pb "kratos-demo/api"
-	"kratos-demo/internal/dao"
+	pb "article/api"
+	"article/internal/dao"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 
 	"github.com/golang/protobuf/ptypes/empty"

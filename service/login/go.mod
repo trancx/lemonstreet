@@ -1,4 +1,4 @@
-module kratos-demo
+module login
 
 go 1.12
 

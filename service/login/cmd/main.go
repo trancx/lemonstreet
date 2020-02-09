@@ -9,14 +9,14 @@ import (
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"
-	"kratos-demo/internal/di"
+	"login/internal/di"
 )
 
 func main() {
 	flag.Parse()
 	log.Init(nil) // debug flag: log.dir={path}
 	defer log.Close()
-	log.Info("kratos-demo start")
+	log.Info("login start")
 	paladin.Init()
 	_, closeFunc, err := di.InitApp()
 	if err != nil {
@@ -30,7 +30,7 @@ func main() {
 		switch s {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			closeFunc()
-			log.Info("kratos-demo exit")
+			log.Info("login exit")
 			time.Sleep(time.Second)
 			return
 		case syscall.SIGHUP:

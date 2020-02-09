@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"kratos-demo/internal/model"
+	"article/internal/model"
 	"github.com/bilibili/kratos/pkg/cache/memcache"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"

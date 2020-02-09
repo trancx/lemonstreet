@@ -3,8 +3,8 @@ package http
 import (
 	"net/http"
 
-	pb "kratos-demo/api"
-	"kratos-demo/internal/model"
+	pb "article/api"
+	"article/internal/model"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
@@ -35,9 +35,10 @@ func New(s pb.DemoServer) (engine *bm.Engine, err error) {
 
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	g := e.Group("/kratos-demo")
+	g := e.Group("/lemonstreet")
 	{
-		g.GET("/start", howToStart)
+		g.GET("/:user/:article", howToStart)
+		g.POST("/:user/:article", howToStart)
 	}
 }
 

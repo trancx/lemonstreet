@@ -7,11 +7,11 @@ package di
 
 import (
 	"github.com/google/wire"
-	"kratos-demo/api"
-	"kratos-demo/internal/dao"
-	"kratos-demo/internal/server/grpc"
-	"kratos-demo/internal/server/http"
-	"kratos-demo/internal/service"
+	"article/api"
+	"/internal/dao"
+	"article/internal/server/grpc"
+	"article/internal/server/http"
+	"article/internal/service"
 )
 
 // Injectors from wire.go:

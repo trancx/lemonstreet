@@ -3,7 +3,7 @@ package dao
 import (
 	"context"
 
-	"kratos-demo/internal/model"
+	"article/internal/model"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/database/sql"
 )

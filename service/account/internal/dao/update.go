@@ -16,6 +16,7 @@ const (
 	_updateMail = "UPDATE user SET mail=? WHERE (uid=?)"
 )
 
+// GENARATE: uid, name conflic?
 func (d *dao) SetUserInfo(c context.Context, info *model.UserInfo) (err error) {
 	var (
 		id int64

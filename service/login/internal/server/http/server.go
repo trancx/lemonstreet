@@ -8,8 +8,8 @@ import (
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
-	pb "kratos-demo/api"
-	"kratos-demo/internal/model"
+	pb "login/api"
+	"login/internal/model"
 )
 
 const (

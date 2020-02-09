@@ -35,7 +35,7 @@ func NewDB() (db *sql.DB, err error) {
 func (d *dao) RawUserInfoID(ctx context.Context, id int64) (info *model.UserInfo, err error) {
 	info = new(model.UserInfo)
 	err = d.db.QueryRow(ctx, _selUserInfoID, id).Scan(&info.UserID, &info.Name, &info.Tel, &info.Mail, &info.Gender, &info.Avatar, &info.Description, &info.CreatedDate)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		log.Error("d.RawInfo.Query error by id = %d, (%v)", id, err)
 		return
 	}
@@ -45,7 +45,7 @@ func (d *dao) RawUserInfoID(ctx context.Context, id int64) (info *model.UserInfo
 func (d *dao) RawUserInfoName(ctx context.Context, name string) (info *model.UserInfo, err error) {
 	info = new(model.UserInfo)
 	err = d.db.QueryRow(ctx, _selUserInfoName, name).Scan(&info.UserID, &info.Name, &info.Tel, &info.Mail, &info.Gender, &info.Avatar, &info.Description, &info.CreatedDate)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		log.Error("d.RawInfo.Query error by name = %s, (%v)", name, err)
 		return
 	}
@@ -56,7 +56,7 @@ func (d *dao) SearchUserInfoByName(c context.Context, name string) (infos []mode
 	name = fmt.Sprintf("%%%s%%", name)
 	rows, err := d.db.Query(c, _searchUserName, name)
 	infos = []model.UserInfo{}
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		log.Error("query  error(%v)", err)
 		return
 	}

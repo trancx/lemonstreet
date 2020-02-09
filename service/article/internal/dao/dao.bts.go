@@ -17,7 +17,7 @@ import (
 	"context"
 
 	"github.com/bilibili/kratos/pkg/cache"
-	"kratos-demo/internal/model"
+	"article/internal/model"
 )
 
 // Article get data from cache if miss will call source method, then add to cache.

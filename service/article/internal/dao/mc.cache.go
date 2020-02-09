@@ -21,7 +21,7 @@ import (
 
 	"github.com/bilibili/kratos/pkg/cache/memcache"
 	"github.com/bilibili/kratos/pkg/log"
-	"kratos-demo/internal/model"
+	"article/internal/model"
 )
 
 var _ _mc

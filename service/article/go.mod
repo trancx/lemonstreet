@@ -1,6 +1,6 @@
-module kratos-demo
+module article
 
-go 1.12
+go 1.13
 
 require (
 	github.com/bilibili/kratos v0.3.2-0.20191125065407-60e2765549ff

@@ -3,6 +3,7 @@ package http
 import (
 	"account/internal/model"
 	"fmt"
+	"github.com/bilibili/kratos/pkg/ecode"
 	"net/http"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
@@ -43,24 +44,66 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 // domain/[:username]
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	//g := e.Group("/api/account")
-	//{
-	//	g.GET("/info", info)
-	//	g.GET("infobyname", infoName)
-	//	g.GET("/search", search)
-	//}
-	e.GET("/api/:user", test)
+	g := e.Group("/lemonstreet")	// FIXME  tourist or not?
+	{
+		g.GET("/:user", getUserInfo)
+
+		g.POST("/:user/avatar", postUserInfo)
+		g.POST("/:user/name", postUserInfo)
+		g.POST("/:user/telephone", postUserInfo)
+		g.POST("/:user", postUserInfo)
+	}
 }
 
 // example for http request handler.
-func test(c *bm.Context) {
-	res := c.Request.URL.Query().Get("user")
-	reply := model.UserInfo{
-		Name:	res,
+func getUserInfo(c *bm.Context) {
+	var (
+		reply 	*model.UserInfo
+		err		error
+	)
+	userName, _ := c.Params.Get("user")
+
+	reply, err = accSvc.InfoName(c, userName)
+	// FIXME: 404 not found. status transfer- sql -> http or gRPC
+	if err != nil {
+		c.JSON(nil, ecode.NothingFound)
+		return
 	}
 
-	c.JSON(&reply, nil)
+	c.JSON(reply, nil)
 }
+
+// new user
+func postUserInfo(c *bm.Context) {
+	var (
+		reply 	*model.UserInfo
+		err		error
+	)
+	userName, _ := c.Params.Get("user")
+
+	fmt.Println(userName)
+
+	if err != nil {
+
+	}
+
+	c.JSON(reply, nil)
+}
+
+func updateUserInfo(c *bm.Context) {
+	var (
+		reply 	*model.UserInfo
+		err		error
+	)
+	userName, _ := c.Params.Get("user")
+
+	fmt.Println(userName)
+	if err != nil {
+
+	}
+	c.JSON(reply, nil)
+}
+
 
 func ping(ctx *bm.Context) {
 	if _, err := accSvc.Ping(ctx, nil); err != nil {

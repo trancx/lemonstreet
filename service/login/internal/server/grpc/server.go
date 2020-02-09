@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	pb "kratos-demo/api"
+	pb "login/api"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/net/rpc/warden"

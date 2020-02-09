@@ -4,11 +4,11 @@
 package di
 
 import (
-	pb "kratos-demo/api"
-	"kratos-demo/internal/dao"
-	"kratos-demo/internal/server/grpc"
-	"kratos-demo/internal/server/http"
-	"kratos-demo/internal/service"
+	pb "login/api"
+	"login/internal/dao"
+	"login/internal/server/grpc"
+	"login/internal/server/http"
+	"login/internal/service"
 
 	"github.com/google/wire"
 )

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"kratos-demo/internal/service"
+	"article/internal/service"
 
 	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"

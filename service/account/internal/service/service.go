@@ -1,21 +1,31 @@
 package service
 
 import (
-	"context"
-	"github.com/prometheus/common/log"
 	"account/internal/model"
+	"context"
+	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/prometheus/common/log"
 
-	"github.com/bilibili/kratos/pkg/conf/paladin"
 	pb "account/api"
 	"account/internal/dao"
-
-	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/bilibili/kratos/pkg/conf/paladin"
 )
 
 // Service service.
 type Service struct {
 	ac  *paladin.Map
 	dao dao.Dao // interface, dao implement it !!
+}
+
+// New new a service and return
+// Trance: 此处接受了 mysql mc redis 三者融合的一个 dao，并初始化了 service
+func New(d dao.Dao) (s *Service, err error) {
+	s = &Service{
+		ac:  &paladin.TOML{},
+		dao: d,
+	}
+	err = paladin.Watch("application.toml", s.ac)
+	return
 }
 
 func (s *Service) BaseInfoByName(c context.Context, req *pb.NameReq) (reply *pb.BaseInfoReply, err error) {
@@ -88,14 +98,41 @@ func (s *Service) SearchBaseInfoByName(c context.Context, req *pb.NameReq) (repl
 	return
 }
 
-// New new a service and return
-// Trance: 此处接受了 mysql mc redis 三者融合的一个 dao，并初始化了 service
-func New(d dao.Dao) (s *Service, err error) {
-	s = &Service{
-		ac:  &paladin.TOML{},
-		dao: d,
-	}
-	err = paladin.Watch("application.toml", s.ac)
+func (s *Service) CreateAccount(c context.Context, info *model.UserInfo) (err error) {
+	err = s.dao.SetUserInfo(c, info)
+
+	return
+}
+
+func (s *Service) UpdateAccount(c context.Context, info *model.UserInfo) (err error) {
+	err = s.dao.SetUserInfo(c, info)
+
+	// test case? avatar or name? or what?
+
+	return
+}
+
+func (s *Service) UpdateAvatar(c context.Context, info *model.UserInfo) (err error) {
+	err = s.dao.SetUserInfo(c, info)
+
+	// test case? avatar or name? or what?
+
+	return
+}
+
+func (s *Service) UpdateTel(c context.Context, info *model.UserInfo) (err error) {
+	err = s.dao.SetUserInfo(c, info)
+
+	// test case? avatar or name? or what?
+
+	return
+}
+
+func (s *Service) UpdateName(c context.Context, info *model.UserInfo) (err error) {
+	err = s.dao.SetUserInfo(c, info)
+
+	// test case? avatar or name? or what?
+
 	return
 }
 
@@ -107,28 +144,4 @@ func (s *Service) Ping(ctx context.Context, e *empty.Empty) (*empty.Empty, error
 // Close close the resource.
 func (s *Service) Close() {
 	s.dao.Close()
-}
-
-func (s *Service) Info1(c context.Context, id int64) (res *model.UserInfo, err error) {
-	//_ = s.dao.UpdateAvatar(c, id, "old")
-	res, err = s.dao.UserInfoID(c, id)
-	//_ = s.dao.UpdateDesc(c, id, "update")
-	//_ = s.dao.UpdateGender(c, id, "f")
-	//_ = s.dao.UpdateMail(c, id, "update@qq.com")
-	//res, err = s.dao.UserInfoID(c, id)
-	return
-}
-
-func (s *Service) InfoName(c context.Context, name string) (res *model.UserInfo, err error) {
-	res, err = s.dao.UserInfoName(c, name)
-	return
-}
-
-func (s *Service) Account(c context.Context, info *model.UserInfo) (err error) {
-	err = s.dao.SetUserInfo(c, info)
-	return
-}
-
-func (s *Service) Search(c context.Context, q string) (infos []model.UserInfo, err error) {
-	return s.dao.SearchUserInfoByName(c, q)
 }
