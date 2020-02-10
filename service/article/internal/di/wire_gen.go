@@ -7,8 +7,7 @@ package di
 
 import (
 	"github.com/google/wire"
-	"article/api"
-	"/internal/dao"
+	"article/internal/dao"
 	"article/internal/server/grpc"
 	"article/internal/server/http"
 	"article/internal/service"
@@ -58,4 +57,3 @@ func InitApp() (*App, func(), error) {
 
 var daoProvider = wire.NewSet(dao.New, dao.NewDB, dao.NewRedis, dao.NewMC)
 
-var serviceProvider = wire.NewSet(service.New, wire.Bind(new(api.DemoServer), new(*service.Service)))

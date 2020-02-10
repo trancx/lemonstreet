@@ -8,27 +8,30 @@ import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 
 // package 命名使用 {appid}.{version} 的方式, version 形如 v1, v2 ..
-package demo.service.v1;
+package comment.service;
 
 // NOTE: 最后请删除这些无用的注释 (゜-゜)つロ 
 
-option go_package = "api";
+option go_package = "commapi";
 option (gogoproto.goproto_getters_all) = false;
 
-service Demo {
-    rpc Ping (.google.protobuf.Empty) returns (.google.protobuf.Empty);
-	rpc SayHello (HelloReq) returns (.google.protobuf.Empty);
-	rpc SayHelloURL(HelloReq) returns (HelloResp) {
-        option (google.api.http) = {
-            get:"/kratos-demo/say_hello"
-        };
-    };
+message Comment {
+    int64 cid = 1;
+    int64 aid = 2;
+    int64 uid = 3;
+    string content = 4;
 }
 
-message HelloReq {
-	string name = 1 [(gogoproto.moretags)='form:"name" validate:"required"'];
+// aid or mid or uid
+message IDReq {
+    int64 id = 1;
 }
 
-message HelloResp {
-    string Content = 1 [(gogoproto.jsontag) = 'content'];
+message CommentsReply {
+    repeated Comment comments = 1;
+}
+
+service Comment {
+    rpc CommentsOfAID(IDReq) returns (CommentsReply);
+    rpc CommentSOfUID(IDReq) returns (CommentsReply);
 }

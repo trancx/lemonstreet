@@ -1,14 +1,14 @@
 package grpc
 
 import (
-	pb "article/api"
+	pb "article/api/artapi"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/net/rpc/warden"
 )
 
 // New new a grpc server.
-func New(svc pb.DemoServer) (ws *warden.Server, err error) {
+func New(svc pb.ArticleServer) (ws *warden.Server, err error) {
 	var rc struct {
 		Server *warden.ServerConfig
 	}
@@ -17,7 +17,7 @@ func New(svc pb.DemoServer) (ws *warden.Server, err error) {
 		err = nil
 	}
 	ws = warden.NewServer(rc.Server)
-	pb.RegisterDemoServer(ws.Server(), svc)
+	pb.RegisterArticleServer(ws.Server(), svc)
 	ws, err = ws.Start()
 	return
 }

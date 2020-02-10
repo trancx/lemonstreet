@@ -2,43 +2,45 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5d7fc819-98d9-4a64-b428-21c8d565b2a9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/lemonclub.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/lemonstreet.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/cmd/cmd" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/cmd/cmd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/internal/dao/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/dao/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/internal/dao/update.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/dao/update.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/internal/server/http/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/server/http/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/internal/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/service/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/cmd/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/account/api/api.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/account/api/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/api/api.bm.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/api/api.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/api/api.proto" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/api/api.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/api/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/cmd/cmd" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/cmd/cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/configs/grpc.toml" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/configs/grpc.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/configs/http.toml" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/configs/http.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/dao.bts.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/dao.bts.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/internal/dao/dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/dao.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/mc.cache.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/mc.cache.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/mc.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/mc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/di/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/di/app.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/internal/di/wire_gen.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/di/wire_gen.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/internal/server/grpc/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/server/grpc/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/internal/server/http/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/server/http/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/internal/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/service/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/cmd/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/dao/dao.bts.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/dao/dao.bts.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/dao/dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/dao/dao.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/dao/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/dao/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/dao/mc.cache.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/dao/mc.cache.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/dao/mc.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/dao/mc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/di/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/di/app.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/di/wire.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/di/wire.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/di/wire_gen.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/di/wire_gen.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/server/grpc/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/server/grpc/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/server/http/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/server/http/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/login/internal/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/service/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/api/api.proto" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/api/api.proto" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -60,6 +62,9 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
+    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
+    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="last_opened_file_path" value="$USER_HOME$" />
@@ -69,7 +74,8 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="go.autoimport" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -84,8 +90,18 @@
     </option>
   </component>
   <component name="RunManager" selected="Go Build.go build kratos-demo">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="lemonstreet" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <go_parameters value="-i" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/" />
+      <package value="lemonstreet" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build kratos-demo" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="lemonclub" />
+      <module name="lemonstreet" />
       <working_directory value="$PROJECT_DIR$/service/login" />
       <kind value="PACKAGE" />
       <package value="kratos-demo" />
@@ -93,15 +109,26 @@
       <method v="2" />
     </configuration>
     <configuration name="go build lemonclub" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="lemonclub" />
+      <module name="lemonstreet" />
       <working_directory value="$PROJECT_DIR$/" />
       <kind value="PACKAGE" />
       <package value="lemonclub" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="lemonstreet" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <go_parameters value="-i" />
+      <framework value="gotest" />
+      <kind value="DIRECTORY" />
+      <package value="lemonstreet" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
     <configuration name="go test lemonclub" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="lemonclub" />
+      <module name="lemonstreet" />
       <working_directory value="$PROJECT_DIR$" />
       <framework value="gotest" />
       <kind value="DIRECTORY" />
