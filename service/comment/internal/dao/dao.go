@@ -22,6 +22,8 @@ type Dao interface {
 	Article(c context.Context, id int64) (*model.Article, error)
 }
 
+// comment  should have an id, represents the rank of the article
+
 // dao dao.
 type dao struct {
 	db          *sql.DB

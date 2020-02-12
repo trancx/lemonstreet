@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	pb "comment/api"
+	pb "comment/api/cmtapi"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/net/rpc/warden"

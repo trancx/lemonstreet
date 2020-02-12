@@ -1,25 +1,28 @@
 package http
 
 import (
+	"article/api/artapi"
+	"article/internal/model"
 	"article/internal/service"
 	"fmt"
-	"net/http"
+	"github.com/bilibili/kratos/pkg/ecode"
+	"time"
 
-	"article/internal/model"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
-	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 )
 
 var artSvc *service.Service
 
 func initRouter(e *bm.Engine) {
-	e.Ping(ping)
+	//e.Ping(ping)
 	g := e.Group("/lemonstreet")
 	{
-		g.GET("/:user/:title", article)
-		g.POST("/:user/:title", howToStart)
+		g.POST("/:user/:title", postArticle)
+		g.GET("/:user/:title", getArticle)
+
 	}
+	e.GET("/format", format)
 }
 
 // New new a bm server.
@@ -42,28 +45,60 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 	return
 }
 
-func ping(ctx *bm.Context) {
-	if _, err := artSvc.Ping(ctx, nil); err != nil {
-		log.Error("ping error(%v)", err)
-		ctx.AbortWithStatus(http.StatusServiceUnavailable)
-	}
+func format(c *bm.Context) {
+	content := new(model.PostArticle)
+	c.JSON(content, nil)
 }
 
-// example for http request handler.
-func article(c *bm.Context) {
-	uname, _ := c.Params.Get("user")
-	title, _ := c.Params.Get("title")
+// 1. anounymous
+// 2. authentic access
+func getArticle(c *bm.Context) {
+	user, _ := c.Params.Get("user")
+	title, _:= c.Params.Get("title")
 
-	fmt.Println("title: " + title)
-	reply ,_:= artSvc.Content(c, uname)
+	if res, err := artSvc.GetArticleAnnms(c, user, title); err != nil {
+		c.JSON(res, err)
+	} else {
+		c.JSON(res, nil)
+	}
 
-	c.JSON(reply.Info, nil)
 }
 
-// example for http request handler.
-func howToStart(c *bm.Context) {
-	k := &model.Kratos{
-		Hello: "Golang 大法好 !!!",
+// authentic request.  body contains userbaseinfo & articlebaseinfo
+// make sure uid && uname & logger valid !!
+func postArticle(c *bm.Context) {
+	var (
+		pa    *model.PostArticle
+		abi   artapi.ArticleBaseInfo
+		title string
+		desc []rune
+		dlen int
+	)
+
+	pa = new(model.PostArticle)
+	if err := c.Bind(pa); err != nil {
+		return // aborted
 	}
-	c.JSON(k, nil)
+	desc = []rune(pa.Content)
+	if dlen = len(desc); dlen > 50 {
+		dlen = 50
+	}
+
+	title, _ = c.Params.Get("title")
+	fmt.Println("title: " + title )
+	abi = artapi.ArticleBaseInfo{
+		Aid:    0,
+		Uid:    pa.UBaseInfo.Uid,
+		Author: pa.UBaseInfo.Name,
+		Title:  title,
+		Desc:   fmt.Sprintf(string(desc[0:dlen])),
+		Date:	time.Now().Unix(),
+	}
+	err := artSvc.PostArticle(c, &abi, pa.Content) // get user info
+
+	if err != nil {
+		c.JSON(nil, ecode.ServerErr)
+		return
+	}
+	c.JSON(&abi, err)
 }

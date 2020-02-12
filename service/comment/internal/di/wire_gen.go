@@ -6,7 +6,6 @@
 package di
 
 import (
-	"comment/api"
 	"comment/internal/dao"
 	"comment/internal/server/grpc"
 	"comment/internal/server/http"
@@ -58,4 +57,3 @@ func InitApp() (*App, func(), error) {
 
 var daoProvider = wire.NewSet(dao.New, dao.NewDB, dao.NewRedis, dao.NewMC)
 
-var serviceProvider = wire.NewSet(service.New, wire.Bind(new(api.DemoServer), new(*service.Service)))

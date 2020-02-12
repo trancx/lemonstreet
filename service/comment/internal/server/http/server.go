@@ -3,7 +3,7 @@ package http
 import (
 	"net/http"
 
-	pb "comment/api"
+	pb "comment/api/cmtapi"
 	"comment/internal/model"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"

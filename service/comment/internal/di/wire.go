@@ -4,7 +4,7 @@
 package di
 
 import (
-	pb "comment/api"
+	pb "comment/api/cmtapi"
 	"comment/internal/dao"
 	"comment/internal/server/grpc"
 	"comment/internal/server/http"

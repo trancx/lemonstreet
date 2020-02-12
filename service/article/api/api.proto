@@ -21,6 +21,7 @@ message ArticleBaseInfo {
     string author = 3 [(gogoproto.jsontag) = "author"];
     string title = 4 [(gogoproto.jsontag) = "title"];
     string desc = 5 [(gogoproto.jsontag) = "desc"];
+    int64   date = 6 [(gogoproto.jsontag) = "date"];
 }
 
 // author or title, depends on the API

@@ -2,25 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5d7fc819-98d9-4a64-b428-21c8d565b2a9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/lemonclub.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/lemonstreet.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/api/api.pb.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/api/client.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/api/api.bm.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/api/api.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/api/api.proto" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/api/api.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/api/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/api/artapi/article-api.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/api/artapi/article-api.pb.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/cmd/cmd" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/cmd/cmd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/configs/grpc.toml" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/configs/grpc.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/configs/http.toml" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/configs/http.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/cmd/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/configs/db.toml" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/configs/db.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/internal/dao/dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/dao.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/di/wire_gen.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/di/wire_gen.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/server/grpc/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/server/grpc/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/db.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/article/internal/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/model/model.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/internal/server/http/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/server/http/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/article/internal/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/service/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/api/api.bm.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/api/api.pb.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/service/comment/api/api.proto" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/api/api.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/api/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/internal/dao/dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/internal/dao/dao.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/internal/di/wire.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/internal/di/wire.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/internal/di/wire_gen.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/internal/di/wire_gen.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/internal/server/grpc/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/internal/server/grpc/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/internal/server/http/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/internal/server/http/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/internal/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/internal/service/service.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

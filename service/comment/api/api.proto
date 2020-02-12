@@ -12,7 +12,7 @@ package comment.service;
 
 // NOTE: 最后请删除这些无用的注释 (゜-゜)つロ 
 
-option go_package = "commapi";
+option go_package = "cmtapi";
 option (gogoproto.goproto_getters_all) = false;
 
 message Comment {
@@ -31,7 +31,7 @@ message CommentsReply {
     repeated Comment comments = 1;
 }
 
-service Comment {
+service Comments {
     rpc CommentsOfAID(IDReq) returns (CommentsReply);
     rpc CommentSOfUID(IDReq) returns (CommentsReply);
 }

@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"article/api/artapi"
 	"context"
 	"time"
 
@@ -32,7 +33,11 @@ type Dao interface {
 	Ping(ctx context.Context) (err error)
 	// bts: -nullcache=&model.Article{ID:-1} -check_null_code=$!=nil&&$.ID==-1
 	Article(c context.Context, id int64) (*model.Article, error)
-	Content(c context.Context, name string) (*acc.BaseInfoReply, error)
+
+	UserBaseInfoByName(c context.Context, name string) (*acc.BaseInfoReply, error)
+	ArticleBaseInfosByName(c context.Context, title string) (infos []artapi.ArticleBaseInfo, err error)
+	//GetArticle(c context.Context, id int64) (*model.Article, error)
+	PostArticle(c context.Context, info *artapi.ArticleBaseInfo, content string) error
 }
 
 // dao dao.
@@ -45,7 +50,7 @@ type dao struct {
 	demoExpire int32
 }
 
-func (d *dao) Content(c context.Context, name string) (*acc.BaseInfoReply, error) {
+func (d *dao) UserBaseInfoByName(c context.Context, name string) (*acc.BaseInfoReply, error) {
 	req := acc.NameReq{
 		Name:                 name,
 		RealIp:               "",
