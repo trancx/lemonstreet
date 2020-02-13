@@ -1,10 +1,13 @@
 package service
 
 import (
+	"comment/api/artapi"
 	"comment/api/cmtapi"
 	"comment/internal/dao"
 	"context"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
+	"github.com/bilibili/kratos/pkg/ecode"
+	"time"
 )
 
 // Service service.
@@ -19,6 +22,19 @@ func (s *Service) CommentsOfAID(context.Context, *cmtapi.IDReq) (*cmtapi.Comment
 
 func (s *Service) CommentSOfUID(context.Context, *cmtapi.IDReq) (*cmtapi.CommentsReply, error) {
 	panic("implement me")
+}
+
+func (s *Service) PostComment(c context.Context, abi *artapi.ArticleBaseInfo,comment *cmtapi.Comment) error {
+	var (
+		err error
+	)
+	comment.Date = time.Now().Unix()
+	err = s.dao.PostComment(c, comment)
+	if err != nil {
+		err = ecode.NothingFound
+		return err
+	}
+	return nil
 }
 
 // New new a service and return.

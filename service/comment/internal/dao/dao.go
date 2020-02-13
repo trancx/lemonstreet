@@ -1,10 +1,12 @@
 package dao
 
 import (
+	"comment/api/cmtapi"
 	"context"
+	"github.com/bilibili/kratos/pkg/naming/discovery"
+	"github.com/bilibili/kratos/pkg/net/rpc/warden/resolver"
 	"time"
 
-	"comment/internal/model"
 	"github.com/bilibili/kratos/pkg/cache/memcache"
 	"github.com/bilibili/kratos/pkg/cache/redis"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
@@ -18,12 +20,20 @@ import (
 type Dao interface {
 	Close()
 	Ping(ctx context.Context) (err error)
-	// bts: -nullcache=&model.Article{ID:-1} -check_null_code=$!=nil&&$.ID==-1
-	Article(c context.Context, id int64) (*model.Article, error)
+	//// bts: -nullcache=&model.Article{ID:-1} -check_null_code=$!=nil&&$.ID==-1
+	//Article(c context.Context, id int64) (*model.Article, error)
+	PostComment(ctx context.Context, comment *cmtapi.Comment) (err error)
+}
+
+func init(){
+	// NOTE: 注意这段代码，表示要使用discovery进行服务发现
+	// NOTE: 还需注意的是，resolver.Register是全局生效的，所以建议该代码放在进程初始化的时候执行
+	// NOTE: ！！！切记不要在一个进程内进行多个不同中间件的Register！！！
+	// NOTE: 在启动应用时，可以通过flag(-discovery.nodes) 或者 环境配置(DISCOVERY_NODES)指定discovery节点
+	resolver.Register(discovery.Builder())
 }
 
 // comment  should have an id, represents the rank of the article
-
 // dao dao.
 type dao struct {
 	db          *sql.DB

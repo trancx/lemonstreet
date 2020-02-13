@@ -35,7 +35,8 @@ type Dao interface {
 	Article(c context.Context, id int64) (*model.Article, error)
 
 	UserBaseInfoByName(c context.Context, name string) (*acc.BaseInfoReply, error)
-	ArticleBaseInfosByName(c context.Context, title string) (infos []artapi.ArticleBaseInfo, err error)
+	ArticleBaseInfosByTitle(c context.Context, title string) (infos []artapi.ArticleBaseInfo, err error)
+	ArticleBaseInfosByUId(c context.Context, id int64) (infos []artapi.ArticleBaseInfo, err error)
 	//GetArticle(c context.Context, id int64) (*model.Article, error)
 	PostArticle(c context.Context, info *artapi.ArticleBaseInfo, content string) error
 }

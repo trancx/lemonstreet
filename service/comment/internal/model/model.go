@@ -1,5 +1,10 @@
 package model
 
+import (
+	"comment/api/artapi"
+	"comment/api/cmtapi"
+)
+
 // Kratos hello kratos.
 type Kratos struct {
 	Hello string
@@ -11,9 +16,7 @@ type Article struct {
 	Author string
 }
 
-type Comment struct {
-	ID	int64
-	UserID	int64
-	ArtID	int64
-	Content	string
+type PostComment struct {
+	ABI artapi.ArticleBaseInfo	`json:"ainfo"`
+	Comment cmtapi.Comment		`json:"comment"`
 }

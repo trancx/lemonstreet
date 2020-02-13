@@ -8,7 +8,7 @@ import (
 )
 
 // New new a grpc server.
-func New(svc pb.DemoServer) (ws *warden.Server, err error) {
+func New(svc pb.CommentsServer) (ws *warden.Server, err error) {
 	var rc struct {
 		Server *warden.ServerConfig
 	}
@@ -17,7 +17,7 @@ func New(svc pb.DemoServer) (ws *warden.Server, err error) {
 		err = nil
 	}
 	ws = warden.NewServer(rc.Server)
-	pb.RegisterDemoServer(ws.Server(), svc)
+	pb.RegisterCommentsServer(ws.Server(), svc)
 	ws, err = ws.Start()
 	return
 }

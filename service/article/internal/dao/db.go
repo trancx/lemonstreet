@@ -11,10 +11,11 @@ import (
 )
 
 const (
-	_selArticle = "SELECT * FROM article WHERE aid=?"
-	_insertArticle = "INSERT article (`content`) VALUES (?)"
-	_insertArticleInfo = "INSERT art_baseinfo (`aid`, `author`, `uid`, `title`, `description`, `date`) VALUES (?,?,?,?,?,?)"
-	_searchArticleBaseInfo = "SELECT * FROM `art_baseinfo` where `title`=?"
+	_selArticle                   = "SELECT * FROM article WHERE aid=?"
+	_insertArticle                = "INSERT article (`content`) VALUES (?)"
+	_insertArticleInfo            = "INSERT art_baseinfo (`aid`, `author`, `uid`, `title`, `description`, `date`) VALUES (?,?,?,?,?,?)"
+	_searchArticleBaseInfoByTitle = "SELECT * FROM `art_baseinfo` WHERE `title`=?"
+	_searchArticleBaseInfoByUId	  = "SELECT * FROM `art_baseinfo` WHERE `uid`=?"
 	)
 
 func NewDB() (db *sql.DB, err error) {
@@ -44,30 +45,56 @@ func (d *dao) PostArticle(c context.Context, info *artapi.ArticleBaseInfo, conte
 	)
 	res, err := d.db.Exec(c, _insertArticle, content)
 	if err != nil {
-		log.Errorf("PostArticle faile (%v)", err)
+		log.Errorf("PostArticle Failed (%v)", err)
 		return err
 	}
 	if id, err = res.LastInsertId(); err != nil {
-		log.Errorf("PostArticle LastInsertId faile (%v)", err)
+		log.Errorf("PostArticle LastInsertId Failed (%v)", err)
 		return err
 	}
 	info.Aid = id
 	//aid`, `author`, `uid`, `title`, `description`, `date`
 	res, err = d.db.Exec(c, _insertArticleInfo, info.Aid, info.Author, info.Uid, info.Title, info.Desc, info.Date)
 	if err != nil {
-		log.Errorf("PostArticleInfo faile (%v)", err)
+		log.Errorf("PostArticleInfo Failed (%v)", err)
 	}
 	return err
 }
 
 // add to cache
-func (d *dao) ArticleBaseInfosByName(c context.Context, title string) (infos []artapi.ArticleBaseInfo, err error)  {
+func (d *dao) ArticleBaseInfosByTitle(c context.Context, title string) (infos []artapi.ArticleBaseInfo, err error)  {
 	var (
 		rows *sql.Rows
 	)
-	rows, err = d.db.Query(c, _searchArticleBaseInfo, title)
+
+	rows, err = d.db.Query(c, _searchArticleBaseInfoByTitle, title)
 	if err != nil {
-		log.Errorf("dao.ArticleBaseInfosByName Fail (%v)", err)
+		log.Errorf("dao.ArticleBaseInfosByTitle Failed (%v)", err)
+		return
+	}
+
+	for rows.Next() {
+		temp := artapi.ArticleBaseInfo{}
+		err = rows.Scan(&temp.Aid, &temp.Author, &temp.Uid, &temp.Title, &temp.Desc, &temp.Date)
+		if err != nil {
+			// FIXME: middle error?
+			log.Errorf("Rows Scan Fail (%v)", err)
+			return
+		}
+		infos = append(infos, temp)
+	}
+
+	return
+}
+
+func (d *dao) ArticleBaseInfosByUId(c context.Context, uid int64) (infos []artapi.ArticleBaseInfo, err error) {
+	var (
+		rows *sql.Rows
+	)
+
+	rows, err = d.db.Query(c, _searchArticleBaseInfoByUId, uid)
+	if err != nil {
+		log.Errorf("dao.ArticleBaseInfosByUId Failed (%v)", err)
 		return
 	}
 

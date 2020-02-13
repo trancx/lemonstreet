@@ -20,12 +20,53 @@ type Service struct {
 	cache together? but we have both uid-key and aid-key, cache is foolish here.
 */
 
-func (s *Service) SearchArticlesByUID(context.Context, *artapi.IDReq) (*artapi.ArticleBaseInfosReply, error) {
-	panic("implement me")
+// NEED_TESTED Cached
+func (s *Service) SearchArticlesByUID(c context.Context, req *artapi.IDReq) (*artapi.ArticleBaseInfosReply, error) {
+	var (
+		err error
+		uid int64
+		infos []*artapi.ArticleBaseInfo
+		res		[]artapi.ArticleBaseInfo
+	)
+	uid = req.Id
+
+	res, err = s.dao.ArticleBaseInfosByUId(c, uid)
+	if err != nil {
+		err = ecode.NothingFound
+		return nil, err
+	}
+	// Ugly code!!!
+	for _, temp := range res {
+		infos = append(infos, &temp)
+	}
+
+	return &artapi.ArticleBaseInfosReply{
+		Infos:                infos,
+	}, err
 }
 
-func (s *Service) SearchArticlesByTitle(context.Context, *artapi.NameReq) (*artapi.ArticleBaseInfosReply, error) {
-	panic("implement me")
+// NEED_TESTED
+func (s *Service) SearchArticlesByTitle(c context.Context, req *artapi.NameReq) (*artapi.ArticleBaseInfosReply, error) {
+	var (
+		err error
+		title string
+		infos []*artapi.ArticleBaseInfo
+		res		[]artapi.ArticleBaseInfo
+	)
+	title = req.Name
+	res, err = s.dao.ArticleBaseInfosByTitle(c, title)
+	if err != nil {
+		err = ecode.NothingFound
+		return nil, err
+	}
+	// Ugly code!!!
+	for _, temp := range res {
+		infos = append(infos, &temp)
+	}
+
+	return &artapi.ArticleBaseInfosReply{
+		Infos:                infos,
+	}, err
 }
 
 // username && title
@@ -53,7 +94,7 @@ func (s *Service) GetArticleAnnms(c context.Context, uname string, title string)
 		return nil, err
 	}
 	info = reply.Info
-	cdds, err = s.dao.ArticleBaseInfosByName(c, title)  // cache it!
+	cdds, err = s.dao.ArticleBaseInfosByTitle(c, title) // cache it!
 	if err != nil {
 		err = ecode.NothingFound
 		return nil, err

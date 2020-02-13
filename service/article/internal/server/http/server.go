@@ -61,7 +61,6 @@ func getArticle(c *bm.Context) {
 	} else {
 		c.JSON(res, nil)
 	}
-
 }
 
 // authentic request.  body contains userbaseinfo & articlebaseinfo

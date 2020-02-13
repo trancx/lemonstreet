@@ -9,16 +9,16 @@ import (
 )
 
 // AppID .
-const AppID = "TODO: ADD APP ID"
+const AppID = "service.comment"
 
-// NewClient new grpc client
-func NewClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (DemoClient, error) {
+// NewClient new grpc client NewRPCArticleClient
+func NewRPCCommentClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (CommentsClient, error) {
 	client := warden.NewClient(cfg, opts...)
 	cc, err := client.Dial(context.Background(), fmt.Sprintf("discovery://default/%s", AppID))
 	if err != nil {
 		return nil, err
 	}
-	return NewDemoClient(cc), nil
+	return NewCommentsClient(cc), nil
 }
 
 // 生成 gRPC 代码

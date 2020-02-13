@@ -1,19 +1,16 @@
 package http
 
 import (
-	"net/http"
-
-	pb "comment/api/cmtapi"
 	"comment/internal/model"
+	"comment/internal/service"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
-	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 )
 
-var svc pb.DemoServer
+var cmtSvc *service.Service
 
 // New new a bm server.
-func New(s pb.DemoServer) (engine *bm.Engine, err error) {
+func New(s *service.Service) (engine *bm.Engine, err error) {
 	var (
 		hc struct {
 			Server *bm.ServerConfig
@@ -25,9 +22,8 @@ func New(s pb.DemoServer) (engine *bm.Engine, err error) {
 		}
 		err = nil
 	}
-	svc = s
+	cmtSvc = s
 	engine = bm.DefaultServer(hc.Server)
-	pb.RegisterDemoBMServer(engine, s)
 	initRouter(engine)
 	err = engine.Start()
 	return
@@ -35,23 +31,36 @@ func New(s pb.DemoServer) (engine *bm.Engine, err error) {
 
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	g := e.Group("/comment")
+	//g := e.Group("/comment")
+	//{
+	//	g.GET("/start", howToStart)
+	//}
+	g := e.Group("/lemonstreet")
 	{
-		g.GET("/start", howToStart)
+		//g.GET("/:user/:title/comments") handle by RPC
+		g.POST("/:user/:title/comments", postComment) // verify
 	}
+	e.GET("/format", format)
 }
 
 func ping(ctx *bm.Context) {
-	if _, err := svc.Ping(ctx, nil); err != nil {
-		log.Error("ping error(%v)", err)
-		ctx.AbortWithStatus(http.StatusServiceUnavailable)
-	}
+
 }
 
 // example for http request handler.
-func howToStart(c *bm.Context) {
-	k := &model.Kratos{
-		Hello: "Golang 大法好 !!!",
+func format(c *bm.Context) {
+	c.JSON(model.PostComment{}, nil)
+}
+
+// example for http request handler.
+func postComment(c *bm.Context) {
+	cmm := model.PostComment{}
+	if err := c.Bind(&cmm); err != nil {
+		return
 	}
-	c.JSON(k, nil)
+	if err := cmtSvc.PostComment(c, &cmm.ABI, &cmm.Comment); err != nil {
+		c.JSON(nil, err)
+	} else {
+		c.JSON(&cmm.Comment, nil)
+	}
 }
