@@ -6,7 +6,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/prometheus/common/log"
 
-	pb "account/api"
+	pb "account/api/accapi"
 	"account/internal/dao"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 )
@@ -15,6 +15,8 @@ import (
 type Service struct {
 	ac  *paladin.Map
 	dao dao.Dao // interface, dao implement it !!
+	// comment RPC
+	//
 }
 
 // New new a service and return

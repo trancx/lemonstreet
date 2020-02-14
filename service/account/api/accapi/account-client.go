@@ -22,7 +22,7 @@ func init(){
 }
 
 // NewClient new grpc client
-func NewClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (AccountClient, error) {
+func NewRPCAccountClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (AccountClient, error) {
 	client := warden.NewClient(cfg, opts...)
 	cc, err := client.Dial(context.Background(), fmt.Sprintf("discovery://default/%s", AppID))
 	if err != nil {

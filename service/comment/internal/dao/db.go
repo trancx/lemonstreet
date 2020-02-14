@@ -12,6 +12,8 @@ import (
 
 const (
 	_insertComment = "INSERT INTO `lemonstreet`.`comment` (`uid`, `aid`, `created`, `content`) VALUES (?,?,?,?)"
+	_selCommentsByUId = "SELECT * FROM `comment` WHERE  `uid`=?"
+	_selCommentsByAId = "SELECT * FROM `comment` WHERE  `aid`=?"
 )
 
 func NewDB() (db *sql.DB, err error) {
@@ -45,4 +47,39 @@ func (d *dao) PostComment(ctx context.Context, comment *cmtapi.Comment) (error) 
 	comment.Cid = cid
 	//d.cache.addCache  NEEDCACHE
 	return nil
+}
+
+// NEEDCACHE
+func (d *dao) SearchCommentsByUId(c context.Context, uid int64) (cmmts []*cmtapi.Comment, err error) {
+	var (
+		rows *sql.Rows
+	)
+	rows, err = d.db.Query(c, _selCommentsByUId, uid)
+	for rows.Next() {
+		temp := cmtapi.Comment{}
+		err = rows.Scan(&temp.Cid, &temp.Uid, &temp.Aid, &temp.Date, &temp.Content)
+		if err != nil {
+			cmmts = nil
+			return
+		}
+		cmmts = append(cmmts, &temp)
+	}
+	return
+}
+
+func (d *dao) SearchCommentsByAId(c context.Context, aid int64) (cmmts []*cmtapi.Comment, err error) {
+	var (
+		rows *sql.Rows
+	)
+	rows, err = d.db.Query(c, _selCommentsByAId, aid)
+	for rows.Next() {
+		temp := cmtapi.Comment{}
+		err = rows.Scan(&temp.Cid, &temp.Uid, &temp.Aid, &temp.Date, &temp.Content)
+		if err != nil {
+			cmmts = nil
+			return
+		}
+		cmmts = append(cmmts, &temp)
+	}
+	return
 }

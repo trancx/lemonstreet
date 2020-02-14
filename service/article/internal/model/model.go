@@ -1,8 +1,9 @@
 package model
 
 import (
-	"article/api/accapi"
+	accapi "article/api/accapi"
 	"article/api/artapi"
+	"article/api/cmtapi"
 )
 
 type Article struct {
@@ -34,4 +35,5 @@ type ArticleInfo struct {
 	 UInfo *accapi.UserBaseInfo	`json:"user"`
 	 ABI *artapi.ArticleBaseInfo	`json:"ainfo"`
 	 Content *Article			`json:"content"`
+	 Comments []*cmtapi.Comment	`json:"comments"`
 }

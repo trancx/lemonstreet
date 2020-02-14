@@ -9,7 +9,7 @@ import (
 )
 
 // AppID .
-const AppID = "service.comment"
+const AppID = "comment.service"
 
 // NewClient new grpc client NewRPCArticleClient
 func NewRPCCommentClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (CommentsClient, error) {
@@ -22,4 +22,4 @@ func NewRPCCommentClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (Com
 }
 
 // 生成 gRPC 代码
-//go:generate kratos tool protoc --grpc --bm api.proto
+//go:generate kratos tool protoc --grpc api.proto

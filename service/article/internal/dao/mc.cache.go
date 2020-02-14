@@ -27,7 +27,7 @@ import (
 var _ _mc
 
 // CacheArticle get data from mc
-func (d *dao) CacheArticle(c context.Context, id int64) (res *model.Article, err error) {
+func (d *Dao) CacheArticle(c context.Context, id int64) (res *model.Article, err error) {
 	key := keyArt(id)
 	res = &model.Article{}
 	if err = d.mc.Get(c, key).Scan(res); err != nil {
@@ -44,7 +44,7 @@ func (d *dao) CacheArticle(c context.Context, id int64) (res *model.Article, err
 }
 
 // AddCacheArticle Set data to mc
-func (d *dao) AddCacheArticle(c context.Context, id int64, val *model.Article) (err error) {
+func (d *Dao) AddCacheArticle(c context.Context, id int64, val *model.Article) (err error) {
 	if val == nil {
 		return
 	}
@@ -58,7 +58,7 @@ func (d *dao) AddCacheArticle(c context.Context, id int64, val *model.Article) (
 }
 
 // DeleteArticleCache delete data from mc
-func (d *dao) DeleteArticleCache(c context.Context, id int64) (err error) {
+func (d *Dao) DeleteArticleCache(c context.Context, id int64) (err error) {
 	key := keyArt(id)
 	if err = d.mc.Delete(c, key); err != nil {
 		if err == memcache.ErrNotFound {

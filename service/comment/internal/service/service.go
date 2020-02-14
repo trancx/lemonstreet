@@ -5,6 +5,7 @@ import (
 	"comment/api/cmtapi"
 	"comment/internal/dao"
 	"context"
+	"database/sql"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/ecode"
 	"time"
@@ -16,12 +17,28 @@ type Service struct {
 	dao dao.Dao
 }
 
-func (s *Service) CommentsOfAID(context.Context, *cmtapi.IDReq) (*cmtapi.CommentsReply, error) {
-	panic("implement me")
+func (s *Service) CommentsOfAID(c context.Context, req *cmtapi.IDReq) (*cmtapi.CommentsReply, error) {
+	res, err := s.dao.SearchCommentsByAId(c, req.Id)
+	if err != nil && err != sql.ErrNoRows {
+		err = ecode.NothingFound
+		return nil, err
+	}
+
+	return &cmtapi.CommentsReply{
+		Comments:             res,
+	}, nil
 }
 
-func (s *Service) CommentSOfUID(context.Context, *cmtapi.IDReq) (*cmtapi.CommentsReply, error) {
-	panic("implement me")
+func (s *Service) CommentSOfUID(c context.Context, req *cmtapi.IDReq) (*cmtapi.CommentsReply, error) {
+	res, err := s.dao.SearchCommentsByUId(c, req.Id)
+	if err != nil && err != sql.ErrNoRows {
+		err = ecode.NothingFound
+		return nil, err
+	}
+
+	return &cmtapi.CommentsReply{
+		Comments:             res,
+	}, nil
 }
 
 func (s *Service) PostComment(c context.Context, abi *artapi.ArticleBaseInfo,comment *cmtapi.Comment) error {

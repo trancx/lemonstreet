@@ -23,6 +23,8 @@ type Dao interface {
 	//// bts: -nullcache=&model.Article{ID:-1} -check_null_code=$!=nil&&$.ID==-1
 	//Article(c context.Context, id int64) (*model.Article, error)
 	PostComment(ctx context.Context, comment *cmtapi.Comment) (err error)
+	SearchCommentsByUId(c context.Context, uid int64) (cmmts []*cmtapi.Comment, err error)
+	SearchCommentsByAId(c context.Context, aid int64) (cmmts []*cmtapi.Comment, err error)
 }
 
 func init(){

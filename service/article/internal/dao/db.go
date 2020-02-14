@@ -30,7 +30,7 @@ func NewDB() (db *sql.DB, err error) {
 	return
 }
 
-func (d *dao) RawArticle(ctx context.Context, id int64) (art *model.Article, err error) {
+func (d *Dao) RawArticle(ctx context.Context, id int64) (art *model.Article, err error) {
 	art = new(model.Article)
 	err = d.db.QueryRow(ctx, _selArticle, id).Scan(&art.ID, &art.Content)
 	if err != nil {
@@ -39,7 +39,7 @@ func (d *dao) RawArticle(ctx context.Context, id int64) (art *model.Article, err
 	return
 }
 
-func (d *dao) PostArticle(c context.Context, info *artapi.ArticleBaseInfo, content string) error {
+func (d *Dao) PostArticle(c context.Context, info *artapi.ArticleBaseInfo, content string) error {
 	var (
 		id int64
 	)
@@ -62,7 +62,7 @@ func (d *dao) PostArticle(c context.Context, info *artapi.ArticleBaseInfo, conte
 }
 
 // add to cache
-func (d *dao) ArticleBaseInfosByTitle(c context.Context, title string) (infos []artapi.ArticleBaseInfo, err error)  {
+func (d *Dao) ArticleBaseInfosByTitle(c context.Context, title string) (infos []artapi.ArticleBaseInfo, err error)  {
 	var (
 		rows *sql.Rows
 	)
@@ -87,7 +87,7 @@ func (d *dao) ArticleBaseInfosByTitle(c context.Context, title string) (infos []
 	return
 }
 
-func (d *dao) ArticleBaseInfosByUId(c context.Context, uid int64) (infos []artapi.ArticleBaseInfo, err error) {
+func (d *Dao) ArticleBaseInfosByUId(c context.Context, uid int64) (infos []artapi.ArticleBaseInfo, err error) {
 	var (
 		rows *sql.Rows
 	)

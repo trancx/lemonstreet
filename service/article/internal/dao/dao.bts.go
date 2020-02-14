@@ -21,7 +21,7 @@ import (
 )
 
 // Article get data from cache if miss will call source method, then add to cache.
-func (d *dao) Article(c context.Context, id int64) (res *model.Article, err error) {
+func (d *Dao) Article(c context.Context, id int64) (res *model.Article, err error) {
 	addCache := true
 	res, err = d.CacheArticle(c, id)
 	if err != nil {
