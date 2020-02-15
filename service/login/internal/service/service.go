@@ -2,11 +2,8 @@ package service
 
 import (
 	"context"
-	"fmt"
-
-	pb "login/api"
-	"login/internal/dao"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
+	"login/internal/dao"
 
 	"github.com/golang/protobuf/ptypes/empty"
 )
@@ -24,22 +21,6 @@ func New(d dao.Dao) (s *Service, err error) {
 		dao: d,
 	}
 	err = paladin.Watch("application.toml", s.ac)
-	return
-}
-
-// SayHello grpc demo func.
-func (s *Service) SayHello(ctx context.Context, req *pb.HelloReq) (reply *empty.Empty, err error) {
-	reply = new(empty.Empty)
-	fmt.Printf("hello %s", req.Name)
-	return
-}
-
-// SayHelloURL bm demo func.
-func (s *Service) SayHelloURL(ctx context.Context, req *pb.HelloReq) (reply *pb.HelloResp, err error) {
-	reply = &pb.HelloResp{
-		Content: "hello " + req.Name,
-	}
-	fmt.Printf("hello url %s", req.Name)
 	return
 }
 

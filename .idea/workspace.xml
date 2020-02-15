@@ -3,24 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="5d7fc819-98d9-4a64-b428-21c8d565b2a9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/api/accapi/account-client.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/api/accapi/account-client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/account/internal/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/account/internal/service/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/cmd/cmd" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/cmd/cmd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/cmd/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/dao.bts.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/dao.bts.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/dao.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/mc.cache.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/mc.cache.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/mc.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/mc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/dao/redis.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/dao/redis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/model/model.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/model/model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/article/internal/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/article/internal/service/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/comment/api/cmtapi/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/api/cmtapi/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/comment/cmd/cmd" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/cmd/cmd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/comment/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/cmd/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/comment/internal/dao/dao.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/internal/dao/dao.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/comment/internal/dao/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/internal/dao/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/comment/internal/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/internal/service/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/comment/api/api.proto" beforeDir="false" afterPath="$PROJECT_DIR$/service/comment/api/api.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/login/api/api.bm.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/login/internal/server/http/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/server/http/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/login/internal/service/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/login/internal/service/service.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
