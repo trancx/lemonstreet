@@ -2,13 +2,14 @@ package http
 
 import (
 	"fmt"
+	"login/api/vrfapi"
+	"login/internal/service"
 	"net/http"
 	"time"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
-	pb "login/api"
 	"login/internal/model"
 )
 
@@ -19,10 +20,12 @@ const (
 
 )
 
-var svc pb.DemoServer
-
+var (
+	loginSvc *service.Service
+	v		 *vrfapi.Verify
+)
 // New new a bm server.
-func New(s pb.DemoServer) (engine *bm.Engine, err error) {
+func New(s *service.Service) (engine *bm.Engine, err error) {
 	var (
 		hc struct {
 			Server *bm.ServerConfig
@@ -34,7 +37,8 @@ func New(s pb.DemoServer) (engine *bm.Engine, err error) {
 		}
 		err = nil
 	}
-	svc = s
+	loginSvc = s
+	v = vrfapi.New()
 	engine = bm.DefaultServer(hc.Server)
 	initRouter(engine)
 	err = engine.Start()
@@ -50,25 +54,13 @@ func initRouter(e *bm.Engine) {
 }
 
 func ping(ctx *bm.Context) {
-	if _, err := svc.Ping(ctx, nil); err != nil {
-		log.Error("ping error(%v)", err)
-		ctx.AbortWithStatus(http.StatusServiceUnavailable)
-	}
+
 }
 
-// example for http request handler.
-func login(c *bm.Context) {
-	info := &model.LoginInfo{}
-
-	if err := c.Bind(&info); err != nil {
-		fmt.Println("Bind error!")
-	} else {
-		fmt.Println("user " + info.Username + "login")
-	}
-
+func genCookies(c *bm.Context, name string, value string) {
 	cookie := &http.Cookie{
-		Name:     _defaultCookieName,
-		Value:    "23333",
+		Name:     name,
+		Value:    value,
 		Path:     "/",
 		HttpOnly: true,
 		Domain:   _defaultDomain,
@@ -76,6 +68,32 @@ func login(c *bm.Context) {
 	cookie.MaxAge = _defaultCookieLifeTime
 	cookie.Expires = time.Now().Add(time.Duration(_defaultCookieLifeTime) * time.Second)
 	http.SetCookie(c.Writer, cookie)
+}
+
+// example for http request handler.
+func login(c *bm.Context) {
+	var (
+		uid int64
+		err error
+		token string
+	)
+	uid = 1
+	info := model.LoginInfo{}
+
+	if err := c.Bind(&info); err != nil {
+		log.Error("Bind error! (%v)", err)
+	} else {
+		log.Info("user " + info.Username + "login")
+	}
+
+	if token, err = v.GenToken(c, uid); err != nil {
+		c.JSON(nil, err)
+		c.Abort()
+		return
+	}
+
+	genCookies(c, "uid", fmt.Sprintf("%d", uid))
+	genCookies(c, "token", token)
 
 	c.JSON(info, nil)
 }

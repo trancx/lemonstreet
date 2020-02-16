@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	pb "account/api"
+	pb "account/api/accapi"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/net/rpc/warden"

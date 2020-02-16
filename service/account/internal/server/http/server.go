@@ -1,6 +1,7 @@
 package http
 
 import (
+	api "account/api/accapi"
 	"account/internal/model"
 	"fmt"
 	"github.com/bilibili/kratos/pkg/ecode"
@@ -9,6 +10,7 @@ import (
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
+	v "account/api/vrfapi"
 
 	"account/internal/service"
 )
@@ -17,7 +19,7 @@ import (
 
 var (
 	accSvc *service.Service
-	//verify *v.Verify
+	verify *v.Verify
 )
 
 // New new a bm server.
@@ -34,6 +36,7 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 		err = nil
 	}
 	accSvc = s
+	verify = v.New()
 	engine = bm.DefaultServer(hc.Server)
 	// pb.RegisterDemoBMServer(engine, s) 这里可以算是适配 protoc 的中间层
 	initRouter(engine)
@@ -44,7 +47,7 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 // domain/[:username]
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	g := e.Group("/lemonstreet")	// FIXME  tourist or not?
+	g := e.Group("/lemonstreet", verify.Verify)	// FIXME  tourist or not?
 	{
 		g.GET("/:user", getUserInfo)
 
@@ -57,20 +60,19 @@ func initRouter(e *bm.Engine) {
 
 // example for http request handler.
 func getUserInfo(c *bm.Context) {
-	var (
-		reply 	*model.UserInfo
-		err		error
-	)
-	userName, _ := c.Params.Get("user")
 
-	reply, err = accSvc.InfoName(c, userName)
+	userName, _ := c.Params.Get("user")
+	//uid, _ := c.Get("uid")
+
+	reply, err := accSvc.BaseInfoByName(c, &api.NameReq{
+		Name:                 userName,
+	})
 	// FIXME: 404 not found. status transfer- sql -> http or gRPC
 	if err != nil {
 		c.JSON(nil, ecode.NothingFound)
 		return
 	}
-
-	c.JSON(reply, nil)
+	c.JSON(reply.Info, nil)
 }
 
 // new user
@@ -110,47 +112,4 @@ func ping(ctx *bm.Context) {
 		log.Error("ping error(%v)", err)
 		ctx.AbortWithStatus(http.StatusServiceUnavailable)
 	}
-}
-
-// example for http request handler.
-func info(c *bm.Context) {
-	// 解析 json -> go-model -> dao -> context
-	res, err := accSvc.Info1(c,27182818285)
-
-	if err != nil {
-		fmt.Println("%v!", err)
-	}
-
-	c.JSON(res, nil)
-}
-
-func infoName(c *bm.Context) {
-	// 解析 json -> go-model -> dao -> context
-	res, err := accSvc.InfoName(c,"trance")
-
-	if err != nil {
-		fmt.Println("error!")
-	}
-
-	c.JSON(res, nil)
-}
-
-func search(c *bm.Context) {
-	var (
-		q string
-	)
-
-	q = c.Request.URL.Query().Get("q")
-	// 解析 json -> go-model -> dao -> context
-	res, err := accSvc.Search(c,q)
-
-	if err != nil {
-		fmt.Println("error!")
-	}
-
-
-	fmt.Println(len(res))
-
-
-	c.JSON(res, nil)
 }

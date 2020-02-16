@@ -30,7 +30,7 @@ func (d *dao) RawGetKey(ctx context.Context, id int64) (token *vrfapi.Token, err
 	token = &vrfapi.Token{}
 	err = d.db.QueryRow(ctx, _selKey, id).Scan(&token.Id, &token.Key)
 	if err != nil {
-		log.Errorf("dao.RawGetKey Failed (%d)", err)
+		log.Errorf("dao.RawGetKey Failed (%v)", err)
 	}
 	return
 }
@@ -41,7 +41,7 @@ func (d *dao) InsertKey(c context.Context, key *vrfapi.Token) error {
 	)
 	_, err = d.db.Exec(c, _insertKey, key.Id, key.Key)
 	if err != nil {
-		log.Errorf("dao.InsertKey Failed (%d)", err)
+		log.Errorf("dao.InsertKey Failed (%v)", err)
 	}
 	return err
 }
@@ -52,7 +52,7 @@ func (d *dao) UpdateKey(c context.Context, key *vrfapi.Token) error {
 	)
 	_, err = d.db.Exec(c, _updateKey, key.Key, key.Id)
 	if err != nil {
-		log.Errorf("dao.UpdateKey Failed (%d)", err)
+		log.Errorf("dao.UpdateKey Failed (%v)", err)
 	}
 	return err
 }

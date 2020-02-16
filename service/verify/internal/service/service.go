@@ -23,7 +23,7 @@ func (s *Service) UdtKey(c context.Context, req *vrfapi.TokenReq) (*vrfapi.Token
 	hash := sha256.New()
 	hash.Write([]byte(fmt.Sprintf("%d", now)))
 	token := hash.Sum(nil)
-	req.Tk.Key = fmt.Sprintf("%d", token)
+	req.Tk.Key = fmt.Sprintf("%x", token)
 
 	if err := s.dao.UpdateKey(c, req.Tk); err != nil {
 		return nil, err
@@ -40,15 +40,17 @@ func (s *Service) GenKey(c context.Context, req *vrfapi.TokenReq) (*vrfapi.Token
 	hash := sha256.New()
 	hash.Write([]byte(fmt.Sprintf("%d", now)))
 	token := hash.Sum(nil)
-	req.Tk.Key = fmt.Sprintf("%d", token)
+	req.Tk.Key = fmt.Sprintf("%x", token)
 
 	// 当用户清除 cookies 就会到这个里面, 当然判断用户是否是第一次登陆也可以保证
 	if err := s.dao.InsertKey(c, req.Tk); err != nil {
+		log.Infof("GenKey Failed, Try UpdateKey uid: %d token: %s", req.Tk.Id, req.Tk.Key)
 		if err = s.dao.UpdateKey(c, req.Tk); err != nil {
+			log.Errorf("UpdateKey Failed (%d)", err)
 			return nil, err
 		}
 	}
-	log.Info("GenKey uid: %d token: %s", req.Tk.Id, req.Tk.Key)
+	log.Infof("GenKey uid: %d token: %s", req.Tk.Id, req.Tk.Key)
 	return &vrfapi.TokenReply{
 		IsValid:              true,
 		Tk:                   req.Tk,

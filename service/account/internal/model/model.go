@@ -1,7 +1,7 @@
 package model
 
 import (
-	pb "account/api"
+	pb "account/api/accapi"
 )
 
 // Kratos hello kratos.

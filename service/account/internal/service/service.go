@@ -3,8 +3,11 @@ package service
 import (
 	"account/internal/model"
 	"context"
+	"github.com/bilibili/kratos/pkg/naming/discovery"
+	"github.com/bilibili/kratos/pkg/net/rpc/warden/resolver"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/prometheus/common/log"
+
 
 	pb "account/api/accapi"
 	"account/internal/dao"
@@ -17,6 +20,10 @@ type Service struct {
 	dao dao.Dao // interface, dao implement it !!
 	// comment RPC
 	//
+}
+
+func init() {
+	resolver.Register(discovery.Builder())
 }
 
 // New new a service and return

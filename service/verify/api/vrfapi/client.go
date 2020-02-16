@@ -80,6 +80,7 @@ func (v *Verify) verify(ctx *bm.Context) error {
 			v.lock.Lock()
 			v.keys[uid] = cookies.Value // RPC will return nil, when invalid, see gRPC handler
 			v.lock.Unlock()
+			ctx.Set("uid", uid)
 			return nil
 		} else {
 			// if reply.IsUpdated, not the right one, but we can cached it
@@ -94,6 +95,7 @@ func (v *Verify) verify(ctx *bm.Context) error {
 	if !strings.EqualFold(cookies.Value, token) {
 		return ecode.AccessDenied
 	}
+	ctx.Set("uid", uid)
 	return nil
 }
 
@@ -102,6 +104,26 @@ func (v *Verify) Verify(ctx *bm.Context) {
 		ctx.JSON(nil, err)
 		ctx.Abort()
 	}
+}
+
+func (v *Verify) GenToken(c context.Context, id int64) (token string, err error) {
+	var (
+		req *TokenReq
+		rpl *TokenReply
+	)
+	req = &TokenReq{
+		Tk:                   &Token{
+			Id:                   id,
+			Key:                  "",
+		},
+	}
+	rpl, err = v.client.GenKey(c, req)
+	if err != nil {
+		err = ecode.ServerErr
+		return
+	}
+	token = rpl.Tk.Key
+	return
 }
 
 // NewClient new grpc client
@@ -114,5 +136,4 @@ func newRPCVerifyClient(cfg *warden.ClientConfig, opts ...grpc.DialOption) (Veri
 	return NewVerifyClient(cc), nil
 }
 
-// 生成 gRPC 代码
-//go:generate kratos tool protoc --grpc --bm api.proto
+
