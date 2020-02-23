@@ -62,7 +62,6 @@ func initRouter(e *bm.Engine) {
 	}
 }
 
-// example for http request handler.
 func getUserInfo(c *bm.Context) {
 	var (
 		info struct{
