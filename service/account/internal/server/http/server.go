@@ -1,16 +1,16 @@
 package http
 
 import (
-	api "account/api/accapi"
 	"account/internal/model"
 	"fmt"
 	"github.com/bilibili/kratos/pkg/ecode"
+	"github.com/bilibili/kratos/pkg/net/http/blademaster/binding"
 	"net/http"
 
+	v "account/api/vrfapi"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
-	v "account/api/vrfapi"
 
 	"account/internal/service"
 )
@@ -36,7 +36,7 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 		err = nil
 	}
 	accSvc = s
-	verify = v.New()
+	//verify = v.New()
 	engine = bm.DefaultServer(hc.Server)
 	// pb.RegisterDemoBMServer(engine, s) 这里可以算是适配 protoc 的中间层
 	initRouter(engine)
@@ -44,52 +44,127 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 	return
 }
 
+func test(c *bm.Context) {
+	c.Set("uid", int64(1))
+}
+
 // domain/[:username]
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	g := e.Group("/lemonstreet", verify.Verify)	// FIXME  tourist or not?
+	g := e.Group("/api/account", test)	// FIXME  tourist or not? , verify.Verify
 	{
-		g.GET("/:user", getUserInfo)
+		g.GET("/info", getUserInfo)
 
-		g.POST("/:user/avatar", postUserInfo)
-		g.POST("/:user/name", postUserInfo)
-		g.POST("/:user/telephone", postUserInfo)
-		g.POST("/:user", postUserInfo)
+		g.POST("/avatar", postAvatar)
+		g.POST("/email", postMail)
+		g.POST("/desc", postDesc)
+		g.POST("/gender", postGender)
 	}
 }
 
 // example for http request handler.
 func getUserInfo(c *bm.Context) {
+	var (
+		info struct{
+			UId int64  	`json:"uid"`
+			Name string `json:"name"`
+		}
+	)
+	uid, exist := c.Get("uid")
 
-	userName, _ := c.Params.Get("user")
-	//uid, _ := c.Get("uid")
-
-	reply, err := accSvc.BaseInfoByName(c, &api.NameReq{
-		Name:                 userName,
-	})
+	if err := c.BindWith(&info, binding.JSON); err != nil {
+		return
+	}
+	// if uid == uid, can moreinfo about tel & other
+	reply, err := accSvc.Info(c, info.UId)
 	// FIXME: 404 not found. status transfer- sql -> http or gRPC
 	if err != nil {
 		c.JSON(nil, ecode.NothingFound)
 		return
 	}
-	c.JSON(reply.Info, nil)
-}
 
-// new user
-func postUserInfo(c *bm.Context) {
-	var (
-		reply 	*model.UserInfo
-		err		error
-	)
-	userName, _ := c.Params.Get("user")
-
-	fmt.Println(userName)
-
-	if err != nil {
-
+	if !exist || uid != info.UId {
+		reply.Tel = ""
+		reply.Mail = ""
 	}
 
 	c.JSON(reply, nil)
+}
+
+func postMail(c *bm.Context) {
+	var (
+		mail struct {
+			Mail string `json:"mail"`
+		}
+	)
+	if err := c.BindWith(&mail, binding.JSON); err != nil {
+		return
+	}
+	uid, _ := c.Get("uid")
+
+	if err := accSvc.UpdateMail(c, uid.(int64), mail.Mail); err != nil {
+		err = ecode.ServerErr
+		c.JSON(nil, err)
+		return
+	}
+	c.JSON(nil, nil)
+}
+
+func postDesc(c *bm.Context) {
+	var (
+		desc struct {
+			Desc string `json:"desc"`
+		}
+	)
+	if err := c.BindWith(&desc, binding.JSON); err != nil {
+		return
+	}
+	uid, _ := c.Get("uid")
+
+	if err := accSvc.UpdateDesc(c, uid.(int64), desc.Desc); err != nil {
+		err = ecode.ServerErr
+		c.JSON(nil, err)
+		return
+	}
+	c.JSON(nil, nil)
+}
+
+func postGender(c *bm.Context) {
+	var (
+		gender struct {
+			Gender string `json:"gender"`
+		}
+	)
+	if err := c.BindWith(&gender, binding.JSON); err != nil {
+		return
+	}
+	uid, _ := c.Get("uid")
+
+	if err := accSvc.UpdateGender(c, uid.(int64), gender.Gender); err != nil {
+		err = ecode.ServerErr
+		c.JSON(nil, err)
+		return
+	}
+	c.JSON(nil, nil)
+}
+
+func postAvatar(c *bm.Context) {
+	var (
+		avatar struct {
+			Avatar string `json:"avatar"`
+		}
+	)
+	if err := c.BindWith(&avatar, binding.JSON); err != nil {
+		return
+	}
+	uid, _ := c.Get("uid")
+
+	if err := accSvc.UpdateAvatar(c, uid.(int64), avatar.Avatar); err != nil {
+		err = ecode.ServerErr
+		c.JSON(nil, err)
+		return
+	}
+	c.JSON(nil, nil)
 }
 
 func updateUserInfo(c *bm.Context) {

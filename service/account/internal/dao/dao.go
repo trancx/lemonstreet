@@ -15,23 +15,17 @@ import (
 
 //go:generate kratos tool genbts
 // Dao dao interface
-type Dao interface {
+type bts interface {
 	Close()
 	Ping(ctx context.Context) (err error)
 	// bts: -nullcache=&model.UserInfo{UserID:-1} -check_null_code=$!=nil&&$.UserID==-1
 	UserInfoID(c context.Context, id int64) (*model.UserInfo, error)
 	// bts: -nullcache=&model.UserInfo{UserID:-1} -check_null_code=$!=nil&&$.UserID==-1
 	UserInfoName(c context.Context, name string) (*model.UserInfo, error)
-	SetUserInfo(c context.Context, info *model.UserInfo) error
-	UpdateAvatar(c context.Context, id int64, avatar string) error
-	UpdateDesc(c context.Context, id int64, desc string) error
-	UpdateGender(c context.Context, id int64, gender string) error
-	UpdateMail(c context.Context, id int64, mail string) error
-	SearchUserInfoByName(c context.Context, name string) (infos []model.UserInfo, err error)
 }
 
 // dao dao.
-type dao struct {
+type Dao struct {
 	db          *sql.DB
 	redis       *redis.Redis
 	mc          *memcache.Memcache
@@ -40,14 +34,14 @@ type dao struct {
 }
 
 // New new a dao and return.
-func New(r *redis.Redis, mc *memcache.Memcache, db *sql.DB) (d Dao, err error) {
+func New(r *redis.Redis, mc *memcache.Memcache, db *sql.DB) (d *Dao, err error) {
 	var cfg struct{
 		DemoExpire xtime.Duration
 	}
 	if err = paladin.Get("application.toml").UnmarshalTOML(&cfg); err != nil {
 		return
 	}
-	d = &dao{
+	d = &Dao{
 		db: db,
 		redis: r,
 		mc: mc,
@@ -58,7 +52,7 @@ func New(r *redis.Redis, mc *memcache.Memcache, db *sql.DB) (d Dao, err error) {
 }
 
 // Close close the resource.
-func (d *dao) Close() {
+func (d *Dao) Close() {
 	d.mc.Close()
 	d.redis.Close()
 	d.db.Close()
@@ -66,6 +60,6 @@ func (d *dao) Close() {
 }
 
 // Ping ping the resource.
-func (d *dao) Ping(ctx context.Context) (err error) {
+func (d *Dao) Ping(ctx context.Context) (err error) {
 	return nil
 }

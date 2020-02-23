@@ -8,7 +8,7 @@ import (
 )
 
 // UserInfoID get data from cache if miss will call source method, then add to cache.
-func (d *dao) UserInfoID(c context.Context, id int64) (res *model.UserInfo, err error) {
+func (d *Dao) UserInfoID(c context.Context, id int64) (res *model.UserInfo, err error) {
 	addCache := true
 	res, err = d.CacheUserInfo(c, id)
 	if err != nil {
@@ -43,7 +43,7 @@ func (d *dao) UserInfoID(c context.Context, id int64) (res *model.UserInfo, err 
 }
 
 // UserInfoName get data from cache if miss will call source method, then add to cache.
-func (d *dao) UserInfoName(c context.Context, name string) (res *model.UserInfo, err error) {
+func (d *Dao) UserInfoName(c context.Context, name string) (res *model.UserInfo, err error) {
 	addCache := true
 	res, err = d.CacheUserInfo(c, name)
 	if err != nil {

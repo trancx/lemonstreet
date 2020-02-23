@@ -12,6 +12,6 @@ type Article struct {
 }
 
 type LoginInfo struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Tel string `json:"tel"`
+	Sms string `json:"sms"`
 }

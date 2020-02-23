@@ -1,6 +1,8 @@
 package http
 
 import (
+	"github.com/bilibili/kratos/pkg/ecode"
+	accapi "login/api/accapi"
 	"fmt"
 	"login/api/vrfapi"
 	"login/internal/service"
@@ -17,14 +19,14 @@ const (
 	_defaultDomain         = "localhost"
 	_defaultCookieName     = "login_cookie"
 	_defaultCookieLifeTime = 2592000
-
 )
 
 var (
 	loginSvc *service.Service
+	accRPC	accapi.AccountClient /* interface */
 	v		 *vrfapi.Verify
 )
-// New new a bm server.
+
 func New(s *service.Service) (engine *bm.Engine, err error) {
 	var (
 		hc struct {
@@ -38,7 +40,10 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 		err = nil
 	}
 	loginSvc = s
-	v = vrfapi.New()
+	v = vrfapi.New() //panic itself
+	if accRPC, err = accapi.NewRPCAccountClient(nil); err != nil {
+		panic(err)
+	}
 	engine = bm.DefaultServer(hc.Server)
 	initRouter(engine)
 	err = engine.Start()
@@ -50,6 +55,7 @@ func initRouter(e *bm.Engine) {
 	g := e.Group("/api")
 	{
 		g.POST("/login", login)
+		g.POST("/logout", logout)
 	}
 }
 
@@ -70,30 +76,43 @@ func genCookies(c *bm.Context, name string, value string) {
 	http.SetCookie(c.Writer, cookie)
 }
 
-// example for http request handler.
 func login(c *bm.Context) {
 	var (
 		uid int64
 		err error
 		token string
 	)
-	uid = 1
-	info := model.LoginInfo{}
+	params := model.LoginInfo{}
 
-	if err := c.Bind(&info); err != nil {
+	if err := c.Bind(&params); err != nil {
 		log.Error("Bind error! (%v)", err)
 	} else {
-		log.Info("user " + info.Username + "login")
+		log.Info("user " + params.Tel + "login")
 	}
 
-	if token, err = v.GenToken(c, uid); err != nil {
-		c.JSON(nil, err)
-		c.Abort()
+	// sms check smsRPC.verify(...)
+
+	// user rpc
+	reply, err := accRPC.BaseInfoByTel(c, &accapi.TelReq{
+		Tel:                  params.Tel,
+		RealIp:               "",
+	})
+
+	if err != nil {
+		c.JSON(nil, ecode.ServerErr)
 		return
 	}
+	// first time or not? ecode to reprent the status
+	uid = reply.Info.Uid
+	if token, err = v.GenToken(c, uid); err != nil {
+		c.JSON(nil, err)
+		return
+	}
+	genCookies(c, _defaultCookieName, fmt.Sprintf("uid=%d&token=%s", uid, token))
 
-	genCookies(c, "uid", fmt.Sprintf("%d", uid))
-	genCookies(c, "token", token)
+	c.JSON(reply.Info, nil)
+}
 
-	c.JSON(info, nil)
+func logout(c *bm.Context) {
+ 	// del cookie
 }

@@ -43,6 +43,8 @@ func (s *Service) GenKey(c context.Context, req *vrfapi.TokenReq) (*vrfapi.Token
 	req.Tk.Key = fmt.Sprintf("%x", token)
 
 	// 当用户清除 cookies 就会到这个里面, 当然判断用户是否是第一次登陆也可以保证
+	// 恶意的 uid 可以导致 原来的 cookies 被更新
+	// 当然，这是用 手机号 才能做到
 	if err := s.dao.InsertKey(c, req.Tk); err != nil {
 		log.Infof("GenKey Failed, Try UpdateKey uid: %d token: %s", req.Tk.Id, req.Tk.Key)
 		if err = s.dao.UpdateKey(c, req.Tk); err != nil {
