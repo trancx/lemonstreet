@@ -30,6 +30,11 @@ message UidReq {
   string real_ip = 2;
 }
 
+message TelReq {
+  string tel = 1;
+  string real_ip = 2;
+}
+
 message NameReq {
   string name = 1;
   string real_ip = 2;
@@ -43,6 +48,7 @@ message NamesReq {
 
 message BaseInfoReply {
     UserBaseInfo info = 1;
+    bool initialize = 2;
 }
 
 message BaseInfosReply {
@@ -51,6 +57,7 @@ message BaseInfosReply {
 
 service Account {
     rpc Ping (.google.protobuf.Empty) returns (.google.protobuf.Empty);
+    rpc BaseInfoByTel (TelReq) returns (BaseInfoReply);
     rpc BaseInfoByName (NameReq) returns (BaseInfoReply);
     rpc BaseInfosByName (NamesReq) returns (BaseInfosReply);
     rpc BaseInfo(UidReq) returns (BaseInfoReply);

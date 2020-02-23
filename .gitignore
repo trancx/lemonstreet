@@ -1,2 +1,5 @@
-/configs
-
+**/cmd/
+**/configs/
+!**/cmd/main.go
+*.log
+.idea

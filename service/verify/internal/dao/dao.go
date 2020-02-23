@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"time"
+	vrfapi "verify/api"
 
 	"github.com/bilibili/kratos/pkg/cache/memcache"
 	"github.com/bilibili/kratos/pkg/cache/redis"
@@ -10,38 +11,36 @@ import (
 	"github.com/bilibili/kratos/pkg/database/sql"
 	"github.com/bilibili/kratos/pkg/sync/pipeline/fanout"
 	xtime "github.com/bilibili/kratos/pkg/time"
-	"account/internal/model"
 )
 
 //go:generate kratos tool genbts
 // Dao dao interface
-type bts interface {
+type Dao interface {
+	// bts: -nullcache=&vrfapi.Token{} -check_null_code=$!=nil
+	GetKey(c context.Context, id int64) (key *vrfapi.Token, err error)
+	InsertKey(c context.Context, key *vrfapi.Token) error
+	UpdateKey(c context.Context, key *vrfapi.Token) error
 	Close()
-	Ping(ctx context.Context) (err error)
-	// bts: -nullcache=&model.UserInfo{UserID:-1} -check_null_code=$!=nil&&$.UserID==-1
-	UserInfoID(c context.Context, id int64) (*model.UserInfo, error)
-	// bts: -nullcache=&model.UserInfo{UserID:-1} -check_null_code=$!=nil&&$.UserID==-1
-	UserInfoName(c context.Context, name string) (*model.UserInfo, error)
 }
 
 // dao dao.
-type Dao struct {
+type dao struct {
 	db          *sql.DB
 	redis       *redis.Redis
 	mc          *memcache.Memcache
-	cache 		*fanout.Fanout
+	cache *fanout.Fanout
 	demoExpire int32
 }
 
 // New new a dao and return.
-func New(r *redis.Redis, mc *memcache.Memcache, db *sql.DB) (d *Dao, err error) {
+func New(r *redis.Redis, mc *memcache.Memcache, db *sql.DB) (d Dao, err error) {
 	var cfg struct{
 		DemoExpire xtime.Duration
 	}
 	if err = paladin.Get("application.toml").UnmarshalTOML(&cfg); err != nil {
 		return
 	}
-	d = &Dao{
+	d = &dao{
 		db: db,
 		redis: r,
 		mc: mc,
@@ -52,7 +51,7 @@ func New(r *redis.Redis, mc *memcache.Memcache, db *sql.DB) (d *Dao, err error) 
 }
 
 // Close close the resource.
-func (d *Dao) Close() {
+func (d *dao) Close() {
 	d.mc.Close()
 	d.redis.Close()
 	d.db.Close()
@@ -60,6 +59,6 @@ func (d *Dao) Close() {
 }
 
 // Ping ping the resource.
-func (d *Dao) Ping(ctx context.Context) (err error) {
+func (d *dao) Ping(ctx context.Context) (err error) {
 	return nil
 }

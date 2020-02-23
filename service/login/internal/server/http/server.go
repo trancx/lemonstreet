@@ -1,14 +1,17 @@
 package http
 
 import (
+	"github.com/bilibili/kratos/pkg/ecode"
+	accapi "login/api/accapi"
 	"fmt"
+	"login/api/vrfapi"
+	"login/internal/service"
 	"net/http"
 	"time"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
-	pb "login/api"
 	"login/internal/model"
 )
 
@@ -16,13 +19,15 @@ const (
 	_defaultDomain         = "localhost"
 	_defaultCookieName     = "login_cookie"
 	_defaultCookieLifeTime = 2592000
-
 )
 
-var svc pb.DemoServer
+var (
+	loginSvc *service.Service
+	accRPC	accapi.AccountClient /* interface */
+	v		 *vrfapi.Verify
+)
 
-// New new a bm server.
-func New(s pb.DemoServer) (engine *bm.Engine, err error) {
+func New(s *service.Service) (engine *bm.Engine, err error) {
 	var (
 		hc struct {
 			Server *bm.ServerConfig
@@ -34,9 +39,12 @@ func New(s pb.DemoServer) (engine *bm.Engine, err error) {
 		}
 		err = nil
 	}
-	svc = s
+	loginSvc = s
+	v = vrfapi.New() //panic itself
+	if accRPC, err = accapi.NewRPCAccountClient(nil); err != nil {
+		panic(err)
+	}
 	engine = bm.DefaultServer(hc.Server)
-	pb.RegisterDemoBMServer(engine, s)
 	initRouter(engine)
 	err = engine.Start()
 	return
@@ -47,29 +55,18 @@ func initRouter(e *bm.Engine) {
 	g := e.Group("/api")
 	{
 		g.POST("/login", login)
+		g.POST("/logout", logout)
 	}
 }
 
 func ping(ctx *bm.Context) {
-	if _, err := svc.Ping(ctx, nil); err != nil {
-		log.Error("ping error(%v)", err)
-		ctx.AbortWithStatus(http.StatusServiceUnavailable)
-	}
+
 }
 
-// example for http request handler.
-func login(c *bm.Context) {
-	info := &model.LoginInfo{}
-
-	if err := c.Bind(&info); err != nil {
-		fmt.Println("Bind error!")
-	} else {
-		fmt.Println("user " + info.Username + "login")
-	}
-
+func genCookies(c *bm.Context, name string, value string) {
 	cookie := &http.Cookie{
-		Name:     _defaultCookieName,
-		Value:    "23333",
+		Name:     name,
+		Value:    value,
 		Path:     "/",
 		HttpOnly: true,
 		Domain:   _defaultDomain,
@@ -77,6 +74,45 @@ func login(c *bm.Context) {
 	cookie.MaxAge = _defaultCookieLifeTime
 	cookie.Expires = time.Now().Add(time.Duration(_defaultCookieLifeTime) * time.Second)
 	http.SetCookie(c.Writer, cookie)
+}
 
-	c.JSON(info, nil)
+func login(c *bm.Context) {
+	var (
+		uid int64
+		err error
+		token string
+	)
+	params := model.LoginInfo{}
+
+	if err := c.Bind(&params); err != nil {
+		log.Error("Bind error! (%v)", err)
+	} else {
+		log.Info("user " + params.Tel + "login")
+	}
+
+	// sms check smsRPC.verify(...)
+
+	// user rpc
+	reply, err := accRPC.BaseInfoByTel(c, &accapi.TelReq{
+		Tel:                  params.Tel,
+		RealIp:               "",
+	})
+
+	if err != nil {
+		c.JSON(nil, ecode.ServerErr)
+		return
+	}
+	// first time or not? ecode to reprent the status
+	uid = reply.Info.Uid
+	if token, err = v.GenToken(c, uid); err != nil {
+		c.JSON(nil, err)
+		return
+	}
+	genCookies(c, _defaultCookieName, fmt.Sprintf("uid=%d&token=%s", uid, token))
+
+	c.JSON(reply.Info, nil)
+}
+
+func logout(c *bm.Context) {
+ 	// del cookie
 }

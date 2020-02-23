@@ -16,11 +16,11 @@ option go_package = "cmtapi";
 option (gogoproto.goproto_getters_all) = false;
 
 message Comment {
-    int64 cid = 1 [(gogoproto.jsontag) = "cid"];;
-    int64 aid = 2 [(gogoproto.jsontag) = "aid"];;
-    int64 uid = 3 [(gogoproto.jsontag) = "uid"];;
-    int64 date = 4 [(gogoproto.jsontag) = "date"];;
-    string content = 5 [(gogoproto.jsontag) = "content"];;
+    int64 cid = 1 [(gogoproto.jsontag) = "cid"];
+    int64 aid = 2 [(gogoproto.jsontag) = "aid"];
+    int64 uid = 3 [(gogoproto.jsontag) = "uid"];
+    int64 date = 4 [(gogoproto.jsontag) = "date"];
+    string content = 5 [(gogoproto.jsontag) = "content"];
 }
 
 // aid or mid or uid

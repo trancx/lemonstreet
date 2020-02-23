@@ -1,7 +1,9 @@
 package model
 
 import (
-	pb "account/api"
+	pb "account/api/accapi"
+	"fmt"
+	"time"
 )
 
 // Kratos hello kratos.
@@ -24,6 +26,10 @@ type UserBaseInfo struct {
 	CreatedDate		string
 }
 
+type ParamUid struct {
+	UId int64 	`json:"uid"`
+} 
+
 type UserInfo struct {
 	 UserID 		int64
 	 Name			string
@@ -33,6 +39,13 @@ type UserInfo struct {
 	 Avatar			string
 	 Description	string
 	 CreatedDate	string
+}
+
+func NewUser() *UserInfo{
+	return &UserInfo{
+		Name:        "tourist",
+		CreatedDate: fmt.Sprintf("%d", time.Now().Unix()),
+	}
 }
 
 func (info *UserInfo) ToBaseInfo() *pb.UserBaseInfo {

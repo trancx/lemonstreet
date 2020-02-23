@@ -1,32 +1,67 @@
 package service
 
 import (
-	"account/internal/model"
-	"context"
-	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/prometheus/common/log"
-
 	pb "account/api/accapi"
 	"account/internal/dao"
+	"account/internal/model"
+	"context"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
+	"github.com/bilibili/kratos/pkg/database/sql"
+	"github.com/bilibili/kratos/pkg/naming/discovery"
+	"github.com/bilibili/kratos/pkg/net/rpc/warden/resolver"
+	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/prometheus/common/log"
 )
 
 // Service service.
 type Service struct {
 	ac  *paladin.Map
-	dao dao.Dao // interface, dao implement it !!
+	dao *dao.Dao // interface, dao implement it !!
 	// comment RPC
 	//
 }
 
+func init() {
+	resolver.Register(discovery.Builder())
+}
+
 // New new a service and return
 // Trance: 此处接受了 mysql mc redis 三者融合的一个 dao，并初始化了 service
-func New(d dao.Dao) (s *Service, err error) {
+func New(d *dao.Dao) (s *Service, err error) {
 	s = &Service{
 		ac:  &paladin.TOML{},
 		dao: d,
 	}
 	err = paladin.Watch("application.toml", s.ac)
+	return
+}
+
+// tel -> DB -> Cached-ID
+func (s *Service) BaseInfoByTel(c context.Context, req *pb.TelReq) (reply *pb.BaseInfoReply, err error) {
+	var (
+		tel string
+		info *model.UserInfo
+		uid int64
+	)
+	reply = &pb.BaseInfoReply{
+		Initialize:true,
+	}
+	tel = req.Tel
+	if info ,err = s.dao.UserInfoTel(c, tel); err != nil {
+		if err != sql.ErrNoRows {
+			reply = nil
+			return
+		}
+		reply.Initialize = false; /* first time*/
+		info = model.NewUser()
+		info.Tel = tel
+		if uid, err = s.dao.InsertUserInfo(c, info); err != nil {
+			reply = nil
+			return
+		}
+		info.UserID = uid
+	}
+	reply.Info = info.ToBaseInfo()
 	return
 }
 
@@ -100,41 +135,44 @@ func (s *Service) SearchBaseInfoByName(c context.Context, req *pb.NameReq) (repl
 	return
 }
 
-func (s *Service) CreateAccount(c context.Context, info *model.UserInfo) (err error) {
-	err = s.dao.SetUserInfo(c, info)
+func (s *Service) Info(c context.Context, id int64) (info *model.UserInfo, err error) {
+	info, err = s.dao.UserInfoID(c, id)
+	if err != nil {
+		log.Errorf("rpc InfoByName failed (%v)", err)
+		return
+	}
+	return
+}
 
+func (s *Service) CreateAccount(c context.Context, info *model.UserInfo) (err error) {
 	return
 }
 
 func (s *Service) UpdateAccount(c context.Context, info *model.UserInfo) (err error) {
-	err = s.dao.SetUserInfo(c, info)
-
 	// test case? avatar or name? or what?
-
 	return
 }
 
-func (s *Service) UpdateAvatar(c context.Context, info *model.UserInfo) (err error) {
-	err = s.dao.SetUserInfo(c, info)
-
+func (s *Service) UpdateAvatar(c context.Context, uid int64, avatar string) (err error) {
+	err = s.dao.UpdateAvatar(c, uid, avatar)
 	// test case? avatar or name? or what?
-
 	return
 }
 
-func (s *Service) UpdateTel(c context.Context, info *model.UserInfo) (err error) {
-	err = s.dao.SetUserInfo(c, info)
-
-	// test case? avatar or name? or what?
-
+// sms rpc test
+func (s *Service) UpdateMail(c context.Context, uid int64, mail string) (err error) {
+	err = s.dao.UpdateMail(c, uid, mail)
 	return
 }
 
-func (s *Service) UpdateName(c context.Context, info *model.UserInfo) (err error) {
-	err = s.dao.SetUserInfo(c, info)
+func (s *Service) UpdateGender(c context.Context, uid int64, gender string) (err error) {
+	err = s.dao.UpdateGender(c, uid, gender)
+	return
+}
 
+func (s *Service) UpdateDesc(c context.Context, uid int64, desc string) (err error) {
+	err = s.dao.UpdateDesc(c, uid, desc)
 	// test case? avatar or name? or what?
-
 	return
 }
 

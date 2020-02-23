@@ -27,7 +27,7 @@ import (
 var _ _mc
 
 // CacheUserInfo get data from mc
-func (d *dao) CacheUserInfo(c context.Context, id interface{}) (res *model.UserInfo, err error) {
+func (d *Dao) CacheUserInfo(c context.Context, id interface{}) (res *model.UserInfo, err error) {
 	key := keyInfo(id)
 	res = &model.UserInfo{}
 	if err = d.mc.Get(c, key).Scan(res); err != nil {
@@ -44,7 +44,7 @@ func (d *dao) CacheUserInfo(c context.Context, id interface{}) (res *model.UserI
 }
 
 // AddCacheUserInfo Set data to mc
-func (d *dao) AddCacheUserInfo(c context.Context, id interface{}, val *model.UserInfo) (err error) {
+func (d *Dao) AddCacheUserInfo(c context.Context, id interface{}, val *model.UserInfo) (err error) {
 	if val == nil {
 		return
 	}
@@ -58,7 +58,7 @@ func (d *dao) AddCacheUserInfo(c context.Context, id interface{}, val *model.Use
 }
 
 // DeleteUserInfoCache delete data from mc
-func (d *dao) DeleteUserInfoCache(c context.Context, id interface{}) (err error) {
+func (d *Dao) DeleteUserInfoCache(c context.Context, id interface{}) (err error) {
 	key := keyInfo(id)
 	if err = d.mc.Delete(c, key); err != nil {
 		if err == memcache.ErrNotFound {

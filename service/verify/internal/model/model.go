@@ -10,8 +10,3 @@ type Article struct {
 	Content string
 	Author string
 }
-
-type LoginInfo struct {
-	Tel string `json:"tel"`
-	Sms string `json:"sms"`
-}

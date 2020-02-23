@@ -1,0 +1,36 @@
+// 定义项目 API 的 proto 文件 可以同时描述 gRPC 和 HTTP API
+// protobuf 文件参考:
+//  - https://developers.google.com/protocol-buffers/
+syntax = "proto3";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+// package 命名使用 {appid}.{version} 的方式, version 形如 v1, v2 ..
+package verify.service;
+
+// NOTE: 最后请删除这些无用的注释 (゜-゜)つロ 
+
+option go_package = "vrfapi";
+option (gogoproto.goproto_getters_all) = false;
+
+message Token {
+    int64 id = 1 [(gogoproto.jsontag) = "uid"];
+    string key = 2 [(gogoproto.jsontag) = "key"];
+}
+
+message TokenReq {
+    Token tk = 1;
+}
+
+message TokenReply {
+    bool  is_updated = 1;
+    bool  is_valid = 2;
+    Token tk =  3;
+}
+
+service Verify {
+    rpc UdtKey(TokenReq) returns (TokenReply);
+    rpc GenKey(TokenReq) returns (TokenReply);
+    rpc VrfKey(TokenReq) returns (TokenReply);
+}
+

@@ -11,6 +11,7 @@ import (
 
 const (
 	_selUserInfoID = "SELECT uid,name,tel,mail,gender,avatar,description,created FROM user WHERE uid=? "
+	_selUserInfoTel = "SELECT uid,name,tel,mail,gender,avatar,description,created FROM user WHERE tel=? "
 	_selUserInfoName = "SELECT uid,name,tel,mail,gender,avatar,description,created FROM user WHERE name=?"
 
 	_searchUserName = "SELECT * from user where name like ?" // %str%
@@ -32,7 +33,7 @@ func NewDB() (db *sql.DB, err error) {
 	return
 }
 
-func (d *dao) RawUserInfoID(ctx context.Context, id int64) (info *model.UserInfo, err error) {
+func (d *Dao) RawUserInfoID(ctx context.Context, id int64) (info *model.UserInfo, err error) {
 	info = new(model.UserInfo)
 	err = d.db.QueryRow(ctx, _selUserInfoID, id).Scan(&info.UserID, &info.Name, &info.Tel, &info.Mail, &info.Gender, &info.Avatar, &info.Description, &info.CreatedDate)
 	if err != nil && err != sql.ErrNoRows {
@@ -42,7 +43,17 @@ func (d *dao) RawUserInfoID(ctx context.Context, id int64) (info *model.UserInfo
 	return
 }
 
-func (d *dao) RawUserInfoName(ctx context.Context, name string) (info *model.UserInfo, err error) {
+func (d *Dao) UserInfoTel(ctx context.Context, tel string) (info *model.UserInfo, err error) {
+	info = new(model.UserInfo)
+	err = d.db.QueryRow(ctx, _selUserInfoTel, tel).Scan(&info.UserID, &info.Name, &info.Tel, &info.Mail, &info.Gender, &info.Avatar, &info.Description, &info.CreatedDate)
+	if err != nil {
+		log.Error("d.RawInfo.Query error by tel = %d, (%v)", tel, err)
+		return
+	}
+	return
+}
+
+func (d *Dao) RawUserInfoName(ctx context.Context, name string) (info *model.UserInfo, err error) {
 	info = new(model.UserInfo)
 	err = d.db.QueryRow(ctx, _selUserInfoName, name).Scan(&info.UserID, &info.Name, &info.Tel, &info.Mail, &info.Gender, &info.Avatar, &info.Description, &info.CreatedDate)
 	if err != nil && err != sql.ErrNoRows {
@@ -52,7 +63,7 @@ func (d *dao) RawUserInfoName(ctx context.Context, name string) (info *model.Use
 	return
 }
 
-func (d *dao) SearchUserInfoByName(c context.Context, name string) (infos []model.UserInfo, err error) {
+func (d *Dao) SearchUserInfoByName(c context.Context, name string) (infos []model.UserInfo, err error) {
 	name = fmt.Sprintf("%%%s%%", name)
 	rows, err := d.db.Query(c, _searchUserName, name)
 	infos = []model.UserInfo{}

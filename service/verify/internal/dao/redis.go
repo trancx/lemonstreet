@@ -19,7 +19,7 @@ func NewRedis() (r *redis.Redis, err error) {
 	return
 }
 
-func (d *Dao) PingRedis(ctx context.Context) (err error) {
+func (d *dao) PingRedis(ctx context.Context) (err error) {
 	if _, err = d.redis.Do(ctx, "SET", "ping", "pong"); err != nil {
 		log.Error("conn.Set(PING) error(%v)", err)
 	}

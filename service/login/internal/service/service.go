@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
-	"fmt"
-
-	pb "login/api"
-	"login/internal/dao"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
+	"github.com/bilibili/kratos/pkg/naming/discovery"
+	"github.com/bilibili/kratos/pkg/net/rpc/warden/resolver"
+	"login/api"
+	"login/internal/dao"
 
 	"github.com/golang/protobuf/ptypes/empty"
 )
@@ -17,6 +17,22 @@ type Service struct {
 	dao dao.Dao
 }
 
+func (s *Service) SayHello(context.Context, *api.HelloReq) (*empty.Empty, error) {
+	panic("implement me")
+}
+
+func (s *Service) SayHelloURL(context.Context, *api.HelloReq) (*api.HelloResp, error) {
+	panic("implement me")
+}
+
+func init() {
+	// NOTE: 注意这段代码，表示要使用discovery进行服务发现
+	// NOTE: 还需注意的是，resolver.Register是全局生效的，所以建议该代码放在进程初始化的时候执行
+	// NOTE: ！！！切记不要在一个进程内进行多个不同中间件的Register！！！
+	// NOTE: 在启动应用时，可以通过flag(-discovery.nodes) 或者 环境配置(DISCOVERY_NODES)指定discovery节点
+	resolver.Register(discovery.Builder())
+}
+
 // New new a service and return.
 func New(d dao.Dao) (s *Service, err error) {
 	s = &Service{
@@ -24,22 +40,6 @@ func New(d dao.Dao) (s *Service, err error) {
 		dao: d,
 	}
 	err = paladin.Watch("application.toml", s.ac)
-	return
-}
-
-// SayHello grpc demo func.
-func (s *Service) SayHello(ctx context.Context, req *pb.HelloReq) (reply *empty.Empty, err error) {
-	reply = new(empty.Empty)
-	fmt.Printf("hello %s", req.Name)
-	return
-}
-
-// SayHelloURL bm demo func.
-func (s *Service) SayHelloURL(ctx context.Context, req *pb.HelloReq) (reply *pb.HelloResp, err error) {
-	reply = &pb.HelloResp{
-		Content: "hello " + req.Name,
-	}
-	fmt.Printf("hello url %s", req.Name)
 	return
 }
 
