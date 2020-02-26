@@ -24,9 +24,8 @@ type ArticleBaseInfo struct {
 	Description 	string
 }
 
-
 type PostArticle struct {
-	UBaseInfo	accapi.UserBaseInfo	`json:"user"`
+	Title		string			`json:"title"`
 	Content		string			`json:"content"`
 }
 

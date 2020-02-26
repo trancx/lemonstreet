@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"article/api/artapi"
 	"context"
 	"fmt"
 
@@ -18,6 +19,12 @@ type _mc interface {
 	AddCacheArticle(c context.Context, id int64, art *model.Article) (err error)
 	// mc: -key=keyArt
 	DeleteArticleCache(c context.Context, id int64) (err error)
+	// mc: -key=keyABI -type=get
+	CacheABI(c context.Context, id int64) (*artapi.ArticleBaseInfo, error)
+	// mc: -key=keyABI -expire=d.demoExpire
+	AddCacheABI(c context.Context, id int64, art *artapi.ArticleBaseInfo) (err error)
+	// mc: -key=keyABI
+	DeleteABI(c context.Context, id int64) (err error)
 }
 
 func NewMC() (mc *memcache.Memcache, err error) {
@@ -40,4 +47,8 @@ func (d *Dao) PingMC(ctx context.Context) (err error) {
 
 func keyArt(id int64) string {
 	return fmt.Sprintf("art_%d", id)
+}
+
+func keyABI(id int64) string {
+	return fmt.Sprintf("abi_%d", id)
 }

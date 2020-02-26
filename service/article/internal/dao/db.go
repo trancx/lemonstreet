@@ -12,6 +12,7 @@ import (
 
 const (
 	_selArticle                   = "SELECT * FROM article WHERE aid=?"
+	_selArticleBaseInfoByAId	  =  "SELECT * FROM `art_baseinfo` WHERE `aid`=?"
 	_insertArticle                = "INSERT article (`content`) VALUES (?)"
 	_insertArticleInfo            = "INSERT art_baseinfo (`aid`, `author`, `uid`, `title`, `description`, `date`) VALUES (?,?,?,?,?,?)"
 	_searchArticleBaseInfoByTitle = "SELECT * FROM `art_baseinfo` WHERE `title`=?"
@@ -58,7 +59,15 @@ func (d *Dao) PostArticle(c context.Context, info *artapi.ArticleBaseInfo, conte
 	if err != nil {
 		log.Errorf("PostArticleInfo Failed (%v)", err)
 	}
-	return err
+	_ = d.cache.Do(c, func(ctx context.Context) {
+		_ = d.AddCacheArticle(c, info.Aid, &model.Article{
+			ID:      info.Aid,
+			Content: content,
+		})
+		_ = d.AddCacheABI(c, info.Aid, info)
+
+	})
+	return nil
 }
 
 // add to cache
@@ -83,7 +92,11 @@ func (d *Dao) ArticleBaseInfosByTitle(c context.Context, title string) (infos []
 		}
 		infos = append(infos, temp)
 	}
-
+	d.cache.Do(c, func(ctx context.Context) {
+		for _, temp := range infos {
+			d.AddCacheABI(c, temp.Aid, &temp)
+		}
+	})
 	return
 }
 
@@ -102,12 +115,32 @@ func (d *Dao) ArticleBaseInfosByUId(c context.Context, uid int64) (infos []artap
 		temp := artapi.ArticleBaseInfo{}
 		err = rows.Scan(&temp.Aid, &temp.Author, &temp.Uid, &temp.Title, &temp.Desc, &temp.Date)
 		if err != nil {
-			// FIXME: middle error?
+			// FIXME: processing error?
 			log.Errorf("Rows Scan Fail (%v)", err)
 			return
 		}
 		infos = append(infos, temp)
 	}
+	// FIXME: cache 是否会因为重复的 id 而出错
+	d.cache.Do(c, func(ctx context.Context) {
+		for _, temp := range infos {
+			d.AddCacheABI(c, temp.Aid, &temp)
+		}
+	})
 
+	return
+}
+
+func (d *Dao) RawArticleBaseInfoByAId(c context.Context, aid int64) (info *artapi.ArticleBaseInfo, err error) {
+	info = &artapi.ArticleBaseInfo{}
+	err = d.db.QueryRow(c, _selArticleBaseInfoByAId, aid).Scan(&info.Aid, &info.Author, &info.Uid, &info.Title, &info.Desc, &info.Date)
+	if err != nil {
+		info = nil
+		log.Errorf("dao.ArticleBaseInfoByAId Failed (%v)", err)
+		return
+	}
+	d.cache.Do(c, func(ctx context.Context) {
+		d.AddCacheABI(c, aid, info)
+	})
 	return
 }

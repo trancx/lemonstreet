@@ -6,24 +6,18 @@ import (
 	"article/internal/service"
 	"fmt"
 	"github.com/bilibili/kratos/pkg/ecode"
+	"github.com/bilibili/kratos/pkg/net/http/blademaster/binding"
 	"time"
+	v "article/api/vrfapi"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 )
 
-var artSvc *service.Service
-
-func initRouter(e *bm.Engine) {
-	//e.Ping(ping)
-	g := e.Group("/lemonstreet")
-	{
-		g.POST("/:user/:title", postArticle)
-		g.GET("/:user/:title", getArticle)
-
-	}
-	e.GET("/format", format)
-}
+var (
+	artSvc *service.Service
+	verify *v.Verify
+)
 
 // New new a bm server.
 func New(s *service.Service) (engine *bm.Engine, err error) {
@@ -39,10 +33,25 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 		err = nil
 	}
 	artSvc = s
+	//verify = v.New()
 	engine = bm.DefaultServer(hc.Server)
 	initRouter(engine)
 	err = engine.Start()
 	return
+}
+
+func initRouter(e *bm.Engine) {
+	//e.Ping(ping)
+	g := e.Group("/api", test)
+	{
+		g.POST("article", postArticle)
+		g.GET("article", getArticle)
+	}
+	e.GET("/format", format)
+}
+
+func test(c *bm.Context)  {
+	c.Set("uid", int64(1))
 }
 
 func format(c *bm.Context) {
@@ -53,10 +62,15 @@ func format(c *bm.Context) {
 // 1. anounymous
 // 2. authentic access
 func getArticle(c *bm.Context) {
-	user, _ := c.Params.Get("user")
-	title, _:= c.Params.Get("title")
-
-	if res, err := artSvc.GetArticleAnnms(c, user, title); err != nil {
+	var (
+		params struct{
+			Aid int64	`json:"aid"`
+		}
+	)
+	if err := c.BindWith(&params, binding.JSON); err != nil {
+		return
+	}
+	if res, err := artSvc.GetArticleAnnms(c, params.Aid); err != nil {
 		c.JSON(res, err)
 	} else {
 		c.JSON(res, nil)
@@ -69,35 +83,30 @@ func postArticle(c *bm.Context) {
 	var (
 		pa    *model.PostArticle
 		abi   artapi.ArticleBaseInfo
-		title string
 		desc []rune
 		dlen int
 	)
-
+	uid, _ := c.Get("uid")
 	pa = new(model.PostArticle)
-	if err := c.Bind(pa); err != nil {
+	if err := c.BindWith(pa, binding.JSON); err != nil {
 		return // aborted
 	}
 	desc = []rune(pa.Content)
 	if dlen = len(desc); dlen > 50 {
 		dlen = 50
 	}
-
-	title, _ = c.Params.Get("title")
-	fmt.Println("title: " + title )
+	// author fill by accRPC client
 	abi = artapi.ArticleBaseInfo{
 		Aid:    0,
-		Uid:    pa.UBaseInfo.Uid,
-		Author: pa.UBaseInfo.Name,
-		Title:  title,
+		Uid:    uid.(int64),
+		Title:  pa.Title,
 		Desc:   fmt.Sprintf(string(desc[0:dlen])),
 		Date:	time.Now().Unix(),
 	}
 	err := artSvc.PostArticle(c, &abi, pa.Content) // get user info
-
 	if err != nil {
 		c.JSON(nil, ecode.ServerErr)
 		return
 	}
-	c.JSON(&abi, err)
+	c.JSON(&abi, nil)
 }
