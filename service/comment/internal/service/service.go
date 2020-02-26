@@ -1,7 +1,6 @@
 package service
 
 import (
-	"comment/api/artapi"
 	"comment/api/cmtapi"
 	"comment/internal/dao"
 	"context"
@@ -41,7 +40,7 @@ func (s *Service) CommentSOfUID(c context.Context, req *cmtapi.IDReq) (*cmtapi.C
 	}, nil
 }
 
-func (s *Service) PostComment(c context.Context, abi *artapi.ArticleBaseInfo,comment *cmtapi.Comment) error {
+func (s *Service) PostComment(c context.Context, comment *cmtapi.Comment) error {
 	var (
 		err error
 	)
