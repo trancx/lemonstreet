@@ -2,6 +2,7 @@ package http
 
 import (
 	cmtapi "comment/api/cmtapi"
+	"comment/internal/model"
 	"comment/internal/service"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/ecode"
@@ -50,8 +51,9 @@ func initRouter(e *bm.Engine) {
 	{
 		//g.GET("/:user/:title/comments") handle by RPC
 		g.POST("/comment", postComment) // verify
+		g.GET("/comment/format", format)
 	}
-	e.GET("/format", format)
+
 }
 
 func test(c *bm.Context)  {
@@ -65,12 +67,18 @@ func ping(ctx *bm.Context) {
 // example for http request handler.
 func format(c *bm.Context) {
 	var (
+		api []model.Format
 		params struct{
 			AId int64 `json:"aid"`
 			Content string `json:"content"`
 		}
 	)
-	c.JSON(&params, nil)
+	api = append(api, model.Format{
+		Method: "post",
+		API: "/api/comment",
+		Params: &params,
+	})
+	c.JSON(api, nil)
 }
 
 // example for http request handler.
