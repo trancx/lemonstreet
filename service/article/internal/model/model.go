@@ -36,3 +36,9 @@ type ArticleInfo struct {
 	 Content *Article			`json:"content"`
 	 Comments []*cmtapi.Comment	`json:"comments"`
 }
+
+type Format struct {
+	Method string	`json:"method"`
+	API string	`json:"api"`
+	Params interface{}	`json:"params"`
+}

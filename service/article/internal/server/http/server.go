@@ -44,10 +44,12 @@ func initRouter(e *bm.Engine) {
 	//e.Ping(ping)
 	g := e.Group("/api", test)
 	{
-		g.POST("article", postArticle)
-		g.GET("article", getArticle)
+		g.POST("/article", postArticle)
+		g.GET("/article", getArticle)
+
+		g.GET("/article/format", format)
 	}
-	e.GET("/format", format)
+
 }
 
 func test(c *bm.Context)  {
@@ -55,8 +57,24 @@ func test(c *bm.Context)  {
 }
 
 func format(c *bm.Context) {
-	content := new(model.PostArticle)
-	c.JSON(content, nil)
+	var (
+		apis []model.Format
+		params struct{
+			Aid int64	`json:"aid"`
+		}
+	)
+	apis = append(apis, model.Format{
+		Method: "get",
+		API:    "/api/article",
+		Params: &params,
+	})
+	apis = append(apis, model.Format{
+		Method: "post",
+		API:    "/api/article",
+		Params: &model.PostArticle{},
+	})
+
+	c.JSON(apis, nil)
 }
 
 // 1. anounymous

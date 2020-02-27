@@ -172,7 +172,7 @@ func New(d *dao.Dao) (s *Service, err error) {
 	if accRPC, err = acc.NewRPCAccountClient(nil); err != nil {
 		panic(err)
 	}
-	//cmtRPC, err = cmt.NewRPCCommentClient(nil)
+	cmtRPC, err = cmt.NewRPCCommentClient(nil)
 	s = &Service{
 		ac:     &paladin.TOML{},
 		dao:    d,
