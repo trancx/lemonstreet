@@ -53,21 +53,48 @@ func initRouter(e *bm.Engine) {
 	e.Ping(ping)
 	g := e.Group("/api/account", test)	// FIXME  tourist or not? , verify.Verify
 	{
+		g.GET("/format", format)
 		g.GET("/info", getUserInfo)
 
 		g.POST("/avatar", postAvatar)
-		g.POST("/email", postMail)
+		g.POST("/mail", postMail)
 		g.POST("/desc", postDesc)
 		g.POST("/gender", postGender)
 	}
+}
+
+func format(c *bm.Context)  {
+	var (
+		apis []model.Format
+		info struct{
+			UId int64  	`json:"uid"`
+		}
+		params struct {
+			Avatar string `json:"avatar"`
+			Mail string `json:"mail"`
+			Desc string `json:"desc"`
+			Gender string `json:"gender"`
+		}
+	)
+	apis = append(apis, model.Format{
+		Method: "get",
+		API:    "/api/account/info",
+		Params: &info,
+	})
+	apis = append(apis, model.Format{
+		Method: "post",
+		API:    "/api/account/avatar-mail-desc-gender",
+		Params: &params,
+	})
+	c.JSON(apis, nil)
 }
 
 func getUserInfo(c *bm.Context) {
 	var (
 		info struct{
 			UId int64  	`json:"uid"`
-			Name string `json:"name"`
 		}
+
 	)
 	uid, exist := c.Get("uid")
 

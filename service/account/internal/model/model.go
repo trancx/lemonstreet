@@ -26,6 +26,12 @@ type UserBaseInfo struct {
 	CreatedDate		string
 }
 
+type Format struct {
+	Method string	`json:"method"`
+	API string	`json:"api"`
+	Params interface{}	`json:"params"`
+}
+
 type ParamUid struct {
 	UId int64 	`json:"uid"`
 } 
