@@ -14,7 +14,13 @@ import (
 )
 
 // AppID .
-const AppID = "verify.service"
+const (
+	_defaultDomain         = "localhost"
+	_defaultCookieName     = "login_cookie"
+	_defaultCookieLifeTime = 2592000
+	AppID = "verify.service"
+)
+
 
 type Verify struct {
 	lock   sync.RWMutex
@@ -43,26 +49,23 @@ func New() *Verify {
 func (v *Verify) verify(ctx *bm.Context) error {
 	var (
 		uid     int64
+		token 	string
 		req     *TokenReq
 		err     error
 		cookies *http.Cookie
 	)
 
-	if cookies, err = ctx.Request.Cookie("uid"); err != nil {
-		err = ecode.AccessDenied
-		return err
-	}
-	if _, err = fmt.Sscanf(cookies.Value, "%d", &uid); err != nil {
+	if cookies, err = ctx.Request.Cookie(_defaultCookieName); err != nil {
 		return ecode.AccessDenied
 	}
-	if cookies, err = ctx.Request.Cookie("token"); err != nil {
-		err = ecode.AccessDenied
-		return err
+	if _, err = fmt.Sscanf(cookies.Value, "%d&%s", &uid, &token); err != nil {
+		return ecode.AccessDenied
 	}
+
 	req = &TokenReq{
 		Tk: &Token{
 			Id:  uid,
-			Key: cookies.Value,
+			Key: token,
 		},
 	}
 	v.lock.RLock()

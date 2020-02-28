@@ -18,16 +18,13 @@ import (
 
 //go:generate kratos tool genbts
 // Dao dao interface
-type bts interface {
+type _bts interface {
 	Close()
 	Ping(ctx context.Context) (err error)
 	// bts: -nullcache=&model.Article{ID:-1} -check_null_code=$!=nil&&$.ID==-1
 	Article(c context.Context, id int64) (*model.Article, error)
-
-	ArticleBaseInfosByTitle(c context.Context, title string) (infos []artapi.ArticleBaseInfo, err error)
-	ArticleBaseInfosByUId(c context.Context, id int64) (infos []artapi.ArticleBaseInfo, err error)
-	//GetArticle(c context.Context, id int64) (*model.Article, error)
-	PostArticle(c context.Context, info *artapi.ArticleBaseInfo, content string) error
+	// bts: -nullcache=&model.ArticleBaseInfo{AId:-1} -check_null_code=$!=nil&&$.AId==-1
+	ArticleBaseInfoByAId(c context.Context, aid int64) (info *artapi.ArticleBaseInfo, err error)
 }
 
 // dao dao. expose RPC client!!!

@@ -24,9 +24,8 @@ type ArticleBaseInfo struct {
 	Description 	string
 }
 
-
 type PostArticle struct {
-	UBaseInfo	accapi.UserBaseInfo	`json:"user"`
+	Title		string			`json:"title"`
 	Content		string			`json:"content"`
 }
 
@@ -36,4 +35,10 @@ type ArticleInfo struct {
 	 ABI *artapi.ArticleBaseInfo	`json:"ainfo"`
 	 Content *Article			`json:"content"`
 	 Comments []*cmtapi.Comment	`json:"comments"`
+}
+
+type Format struct {
+	Method string	`json:"method"`
+	API string	`json:"api"`
+	Params interface{}	`json:"params"`
 }

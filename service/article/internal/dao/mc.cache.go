@@ -10,6 +10,12 @@
 		AddCacheArticle(c context.Context, id int64, art *model.Article) (err error)
 		// mc: -key=keyArt
 		DeleteArticleCache(c context.Context, id int64) (err error)
+		// mc: -key=keyABI -type=get
+		CacheABI(c context.Context, id int64) (*model.Article, error)
+		// mc: -key=keyABI -expire=d.demoExpire
+		AddCacheABI(c context.Context, id int64, art *model.Article) (err error)
+		// mc: -key=keyABI
+		DeleteABI(c context.Context, id int64) (err error)
 	}
 */
 
@@ -19,9 +25,10 @@ import (
 	"context"
 	"fmt"
 
+	"article/internal/model"
+	"article/api/artapi"
 	"github.com/bilibili/kratos/pkg/cache/memcache"
 	"github.com/bilibili/kratos/pkg/log"
-	"article/internal/model"
 )
 
 var _ _mc
@@ -66,6 +73,51 @@ func (d *Dao) DeleteArticleCache(c context.Context, id int64) (err error) {
 			return
 		}
 		log.Errorv(c, log.KV("DeleteArticleCache", fmt.Sprintf("%+v", err)), log.KV("key", key))
+		return
+	}
+	return
+}
+
+// CacheABI get data from mc
+func (d *Dao) CacheABI(c context.Context, id int64) (res *artapi.ArticleBaseInfo, err error) {
+	key := keyABI(id)
+	res = &artapi.ArticleBaseInfo{}
+	if err = d.mc.Get(c, key).Scan(res); err != nil {
+		res = nil
+		if err == memcache.ErrNotFound {
+			err = nil
+		}
+	}
+	if err != nil {
+		log.Errorv(c, log.KV("CacheABI", fmt.Sprintf("%+v", err)), log.KV("key", key))
+		return
+	}
+	return
+}
+
+// AddCacheABI Set data to mc
+func (d *Dao) AddCacheABI(c context.Context, id int64, val *artapi.ArticleBaseInfo) (err error) {
+	if val == nil {
+		return
+	}
+	key := keyABI(id)
+	item := &memcache.Item{Key: key, Object: val, Expiration: d.demoExpire, Flags: memcache.FlagJSON}
+	if err = d.mc.Set(c, item); err != nil {
+		log.Errorv(c, log.KV("AddCacheABI", fmt.Sprintf("%+v", err)), log.KV("key", key))
+		return
+	}
+	return
+}
+
+// DeleteABI delete data from mc
+func (d *Dao) DeleteABI(c context.Context, id int64) (err error) {
+	key := keyABI(id)
+	if err = d.mc.Delete(c, key); err != nil {
+		if err == memcache.ErrNotFound {
+			err = nil
+			return
+		}
+		log.Errorv(c, log.KV("DeleteABI", fmt.Sprintf("%+v", err)), log.KV("key", key))
 		return
 	}
 	return

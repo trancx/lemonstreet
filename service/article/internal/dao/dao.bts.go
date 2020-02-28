@@ -3,11 +3,13 @@
 /*
   Package dao is a generated cache proxy package.
   It is generated from:
-  type Dao interface {
+  type _bts interface {
 		Close()
 		Ping(ctx context.Context) (err error)
 		// bts: -nullcache=&model.Article{ID:-1} -check_null_code=$!=nil&&$.ID==-1
 		Article(c context.Context, id int64) (*model.Article, error)
+		// bts: -nullcache=&model.ArticleBaseInfo{AId:-1} -check_null_code=$!=nil&&$.AId==-1
+		ArticleBaseInfoByAId(c context.Context, aid int64) (info *artapi.ArticleBaseInfo, err error)
 	}
 */
 
@@ -16,9 +18,12 @@ package dao
 import (
 	"context"
 
-	"github.com/bilibili/kratos/pkg/cache"
+	"article/api/artapi"
 	"article/internal/model"
+	"github.com/bilibili/kratos/pkg/cache"
 )
+
+var _ _bts
 
 // Article get data from cache if miss will call source method, then add to cache.
 func (d *Dao) Article(c context.Context, id int64) (res *model.Article, err error) {
@@ -51,6 +56,41 @@ func (d *Dao) Article(c context.Context, id int64) (res *model.Article, err erro
 	}
 	d.cache.Do(c, func(c context.Context) {
 		d.AddCacheArticle(c, id, miss)
+	})
+	return
+}
+
+// ArticleBaseInfoByAId get data from cache if miss will call source method, then add to cache.
+func (d *Dao) ArticleBaseInfoByAId(c context.Context, aid int64) (res *artapi.ArticleBaseInfo, err error) {
+	addCache := true
+	res, err = d.CacheABI(c, aid)
+	if err != nil {
+		addCache = false
+		err = nil
+	}
+	defer func() {
+		if res != nil && res.Aid == -1 {
+			res = nil
+		}
+	}()
+	if res != nil {
+		cache.MetricHits.Inc("bts:ArticleBaseInfoByAId")
+		return
+	}
+	cache.MetricMisses.Inc("bts:ArticleBaseInfoByAId")
+	res, err = d.RawArticleBaseInfoByAId(c, aid)
+	if err != nil {
+		return
+	}
+	miss := res
+	if miss == nil {
+		miss = &artapi.ArticleBaseInfo{Aid: -1}
+	}
+	if !addCache {
+		return
+	}
+	d.cache.Do(c, func(c context.Context) {
+		d.AddCacheABI(c, aid, miss)
 	})
 	return
 }
