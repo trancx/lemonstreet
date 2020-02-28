@@ -25,6 +25,25 @@ type Service struct {
 /* gRPC implementation, normal path, db -> cache, or specific amount(e.g. 100) comments
 	cache together? but we have both uid-key and aid-key, cache is foolish here.
 */
+func (s *Service) LatestArticles(ctx context.Context, in *artapi.TimeReq) (*artapi.ArticleBaseInfosReply, error) {
+	var (
+		err error
+		infos []*artapi.ArticleBaseInfo
+		res		[]artapi.ArticleBaseInfo
+	)
+	res, err = s.dao.RawArticleBaseInfoByDate(ctx, in.Beg, in.End)
+	if err != nil {
+		err = ecode.NothingFound
+		return nil, err
+	}
+	// Ugly code!!!
+	for _, temp := range res {
+		infos = append(infos, &temp)
+	}
+	return &artapi.ArticleBaseInfosReply{
+		Infos:                infos,
+	}, err
+}
 
 // NEED_TESTED Cached
 func (s *Service) SearchArticlesByUID(c context.Context, req *artapi.IDReq) (*artapi.ArticleBaseInfosReply, error) {

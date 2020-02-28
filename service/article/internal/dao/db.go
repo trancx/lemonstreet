@@ -15,9 +15,10 @@ const (
 	_selArticleBaseInfoByAId	  =  "SELECT * FROM `art_baseinfo` WHERE `aid`=?"
 	_insertArticle                = "INSERT article (`content`) VALUES (?)"
 	_insertArticleInfo            = "INSERT art_baseinfo (`aid`, `author`, `uid`, `title`, `description`, `date`) VALUES (?,?,?,?,?,?)"
-	_searchArticleBaseInfoByTitle = "SELECT * FROM `art_baseinfo` WHERE `title`=?"
-	_searchArticleBaseInfoByUId	  = "SELECT * FROM `art_baseinfo` WHERE `uid`=?"
-	)
+	_searchArticleBaseInfoByTitle = "SELECT * FROM `art_baseinfo` WHERE `title`=? LIMIT 0,100"
+	_searchArticleBaseInfoByUId	  = "SELECT * FROM `art_baseinfo` WHERE `uid`=? LIMIT 0,100"
+	_searchArticleBaseInfoByDate  = "SELECT * FROM `art_baseinfo` WHERE `date`>? OR `date`<?  LIMIT 0,100"
+)
 
 func NewDB() (db *sql.DB, err error) {
 	var cfg struct {
@@ -142,5 +143,36 @@ func (d *Dao) RawArticleBaseInfoByAId(c context.Context, aid int64) (info *artap
 	d.cache.Do(c, func(ctx context.Context) {
 		d.AddCacheABI(c, aid, info)
 	})
+	return
+}
+
+func (d *Dao) RawArticleBaseInfoByDate(c context.Context, beg int64, end int64) (infos []artapi.ArticleBaseInfo, err error) {
+	var (
+		rows *sql.Rows
+	)
+
+	rows, err = d.db.Query(c, _searchArticleBaseInfoByDate, end, beg)
+	if err != nil {
+		log.Errorf("dao.ArticleBaseInfosByUId Failed (%v)", err)
+		return
+	}
+
+	for rows.Next() {
+		temp := artapi.ArticleBaseInfo{}
+		err = rows.Scan(&temp.Aid, &temp.Author, &temp.Uid, &temp.Title, &temp.Desc, &temp.Date)
+		if err != nil {
+			// FIXME: processing error?
+			log.Errorf("Rows Scan Fail (%v)", err)
+			return
+		}
+		infos = append(infos, temp)
+	}
+	// FIXME: cache 是否会因为重复的 id 而出错
+	d.cache.Do(c, func(ctx context.Context) {
+		for _, temp := range infos {
+			d.AddCacheABI(c, temp.Aid, &temp)
+		}
+	})
+
 	return
 }

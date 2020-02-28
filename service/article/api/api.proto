@@ -34,6 +34,11 @@ message IDReq {
     int64 id = 1;
 }
 
+message TimeReq {
+    int64 beg = 1;
+    int64 end = 2;
+}
+
 message ArticleBaseInfoReply {
     ArticleBaseInfo info = 1;
 }
@@ -47,4 +52,6 @@ service Article {
     rpc SearchArticlesByUID (IDReq) returns (ArticleBaseInfosReply); // multi replys
     // 搜索模块 通过 title 来搜索文章
     rpc SearchArticlesByTitle (NameReq) returns (ArticleBaseInfosReply);
+    // 获取最新的 blog
+    rpc LatestArticles (TimeReq) returns (ArticleBaseInfosReply);
 }
