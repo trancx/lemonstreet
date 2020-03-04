@@ -2,6 +2,13 @@
 
 
   services:
+    discovery:
+      image: alpine:latest
+      container_name: lemon-disc
+      volumes:
+        - disc-data-volume:/mnt
+      command: /bin/sh -c  "cd /mnt && ./discovery -conf discovery-example.toml"
+
     db:
       image: mysql:latest
       container_name: lemon-db
@@ -15,24 +22,19 @@
       - db-data-volume:/var/lib/mysql
       - db-log-volume:/var/log/mysql
 
-    nginx:
-      image: nginx:latest
-      container_name: lemon-ngx
-      ports:
-        - 7999:80
-      volumes:
-        - ngx-res-volume:/usr/share/nginx/html
-        - ngx-conf-volume:/etc/nginx/conf
-        - ngx-log-volume:/var/log/nginx
-
-    discovery:
+    verify:
       image: alpine:latest
-      container_name: lemon-disc
+      container_name: lemon-vrf
       ports:
-        - 7171:7171
+        - 8002:8000
+      environment:
+        - DISCOVERY_NODES=lemon-disc:7171
       volumes:
-        - disc-data-volume:/mnt
-      command: /bin/sh -c  "cd /mnt && ./discovery -conf discovery-example.toml"
+        - verify-data-volume:/mnt
+      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-db:3306, lemon-disc:7171' -c './cmd -conf configs/'"
+      depends_on:
+        - db
+        - discovery
 
     account:
       image: alpine:latest
@@ -43,9 +45,82 @@
         - DISCOVERY_NODES=lemon-disc:7171
       volumes:
         - account-data-volume:/mnt
-      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-db:3306' -c './cmd -conf configs/'"
+      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-vrf:9000' -c './cmd -conf configs/'"
+      depends_on:
+        - verify
+
+    login:
+      image: alpine:latest
+      container_name: lemon-login
+      ports:
+        - 8004:8000
+      environment:
+        - DISCOVERY_NODES=lemon-disc:7171
+      volumes:
+        - login-data-volume:/mnt
+      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-acc:8000' -c './cmd -conf configs/'"
+      depends_on:
+        - account
+
+    comment:
+      image: alpine:latest
+      container_name: lemon-cmt
+      ports:
+        - 8003:8000
+      environment:
+        - DISCOVERY_NODES=lemon-disc:7171
+      volumes:
+        - comment-data-volume:/mnt
+      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-vrf:9000' -c './cmd -conf configs/'"
+      depends_on:
+        - verify
+
+    article:
+      image: alpine:latest
+      container_name: lemon-art
+      ports:
+        - 8001:8000
+      environment:
+        - DISCOVERY_NODES=lemon-disc:7171
+      volumes:
+        - article-data-volume:/mnt
+      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-cmt:8000, lemon-acc:8000' -c './cmd -conf configs/'"
       depends_on:
         - discovery
+
+    explore:
+      image: alpine:latest
+      container_name: lemon-explore
+      ports:
+        - 8005:8000
+      environment:
+        - DISCOVERY_NODES=lemon-disc:7171
+      volumes:
+        - explore-data-volume:/mnt
+      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-art:8000' -c './cmd -conf configs/'"
+      depends_on:
+        - discovery
+
+    search:
+      image: alpine:latest
+      container_name: lemon-search
+      ports:
+        - 8006:8000
+      environment:
+        - DISCOVERY_NODES=lemon-disc:7171
+      volumes:
+        - search-data-volume:/mnt
+      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-art:8000' -c './cmd -conf configs/'"
+
+    nginx:
+      image: nginx:latest
+      container_name: lemon-ngx
+      ports:
+        - 7999:80
+      volumes:
+        - ngx-res-volume:/usr/share/nginx/html
+        - ngx-conf-volume:/etc/nginx/conf
+        - ngx-log-volume:/var/log/nginx
 
   volumes:
     ngx-res-volume:
@@ -61,10 +136,25 @@
       external: true
     db-init-volume:
       external: true
+
     disc-data-volume:
       external: true
+
     account-data-volume:
       external: true
+    article-data-volume:
+      external: true
+    comment-data-volume:
+      external: true
+    explore-data-volume:
+      external: true
+    login-data-volume:
+      external: true
+    search-data-volume:
+      external: true
+    verify-data-volume:
+      external: true
+
 
   networks:
     default:

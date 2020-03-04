@@ -1,7 +1,8 @@
 target	:=	cmd/cmd
 PHONY	:= 	all
 service :=  account
-ifeq ($target, $(wildcard $(target)))
+
+ifeq ($(target), $(wildcard $(target)))
 update := $(shell find . -name '*.go' -newer cmd/cmd | sed 's/\.\///g' | grep go)
 endif
 
@@ -13,7 +14,7 @@ all: $(target) $(volume_dir)
 	$(Q)cp -fr $(target) configs/ -t $(volume_dir)
 
 ifeq ($(update),) 
-$(target): 
+$(target):
 	$(Q)cd cmd && go build && echo "rebuild the go service"
 else
 $(target): FORCE

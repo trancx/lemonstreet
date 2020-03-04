@@ -1,7 +1,7 @@
 target	:=	cmd/cmd
 PHONY	:= 	all
 service :=  	verify
-ifeq ($target, $(wildcard $(target)))
+ifeq ($(target), $(wildcard $(target)))
 update := $(shell find . -name '*.go' -newer cmd/cmd | sed 's/\.\///g' | grep go)
 endif
 

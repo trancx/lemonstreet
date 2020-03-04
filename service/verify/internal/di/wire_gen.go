@@ -34,7 +34,7 @@ func InitApp() (*App, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	server, err := grpc.New(serviceService)
+	server, cancel, err := grpc.New(serviceService)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -43,6 +43,7 @@ func InitApp() (*App, func(), error) {
 		return nil, nil, err
 	}
 	return app, func() {
+		cancel()
 		cleanup()
 	}, nil
 }
