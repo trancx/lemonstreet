@@ -10,3 +10,9 @@ type Article struct {
 	Content string
 	Author string
 }
+
+type Format struct {
+	Method string	`json:"method"`
+	API string	`json:"api"`
+	Params interface{}	`json:"params"`
+}

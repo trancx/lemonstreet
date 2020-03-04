@@ -1,11 +1,7 @@
 package main
 
 import (
-	"context"
 	"flag"
-	"github.com/bilibili/kratos/pkg/conf/env"
-	"github.com/bilibili/kratos/pkg/naming"
-	"github.com/bilibili/kratos/pkg/naming/discovery"
 	"os"
 	"os/signal"
 	"syscall"
@@ -16,10 +12,6 @@ import (
 	"github.com/bilibili/kratos/pkg/log"
 )
 
-const (
-	discoveryID = "comment.service"
-)
-
 func main() {
 	flag.Parse()
 	log.Init(nil) // debug flag: log.dir={path}
@@ -27,24 +19,6 @@ func main() {
 	log.Info("comment start")
 	paladin.Init()
 	_, closeFunc, err := di.InitApp()
-	ip := "127.0.0.1" // NOTE: 必须拿到您实例节点的真实IP，
-	port := "9003" // NOTE: 必须拿到您实例grpc监听的真实端口，warden默认监听9000
-	hn, _ := os.Hostname()
-	dis := discovery.New(nil)
-	ins := &naming.Instance {
-		Zone:     env.Zone,
-		Env:      env.DeployEnv,
-		AppID:    discoveryID,
-		Hostname: hn,
-		Addrs: []string{
-			"grpc://" + ip + ":" + port,
-		},
-	}
-	cancel, err := dis.Register(context.Background(), ins)
-	if err != nil {
-		panic(err)
-	}
-	defer cancel()
 	if err != nil {
 		panic(err)
 	}

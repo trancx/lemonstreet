@@ -3,11 +3,10 @@ package service
 import (
 	"context"
 	"github.com/bilibili/kratos/pkg/conf/paladin"
-	"github.com/bilibili/kratos/pkg/ecode"
 	"github.com/bilibili/kratos/pkg/naming/discovery"
 	"github.com/bilibili/kratos/pkg/net/rpc/warden/resolver"
-	"search/api/artapi"
 	"search/api/accapi"
+	"search/api/artapi"
 	"search/internal/dao"
 
 	"github.com/golang/protobuf/ptypes/empty"
@@ -66,7 +65,6 @@ func (s *Service) SearchUsers(c context.Context, query string) ([]*api.UserBaseI
 	}
 	return rpl.Infos, nil
 }
-
 
 // Ping ping the resource.
 func (s *Service) Ping(ctx context.Context, e *empty.Empty) (*empty.Empty, error) {

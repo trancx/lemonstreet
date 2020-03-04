@@ -2,5 +2,6 @@
 **/configs/
 !**/cmd/main.go
 *.log
-.idea
+**/.idea/
 docker/
+mnt/

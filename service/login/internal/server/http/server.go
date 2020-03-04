@@ -51,16 +51,29 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 }
 
 func initRouter(e *bm.Engine) {
-	e.Ping(ping)
 	g := e.Group("/api")
 	{
 		g.POST("/login", login)
 		g.POST("/logout", logout)
+		g.GET("/login/format", format)
 	}
 }
 
-func ping(ctx *bm.Context) {
-
+func format(c *bm.Context) {
+	var (
+		api []model.Format
+	)
+	api = append(api, model.Format{
+		Method: "post",
+		API: "/api/login",
+		Params: &model.LoginInfo{},
+	})
+	api = append(api, model.Format{
+		Method: "post",
+		API: "/api/loout",
+		Params: nil,
+	})
+	c.JSON(api, nil)
 }
 
 func genCookies(c *bm.Context, name string, value string) {

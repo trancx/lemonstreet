@@ -8,6 +8,7 @@ require (
 	github.com/golang/protobuf v1.3.2
 	github.com/google/wire v0.3.0
 	github.com/prometheus/common v0.6.0
+	github.com/trancx/netip v0.0.0-20200304045344-73c5c50954aa
 	google.golang.org/genproto v0.0.0-20191009194640-548a555dbc03
 	google.golang.org/grpc v1.24.0
 )
