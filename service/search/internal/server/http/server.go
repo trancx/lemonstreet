@@ -41,8 +41,12 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	e.GET("/search", search)
-	e.GET("api/search/format", format)
+	g := e.Group("/api")
+	{
+		g.GET("/search", search)
+		g.GET("/search/format", format)
+	}
+
 }
 
 func format(c *bm.Context)  {
@@ -51,7 +55,7 @@ func format(c *bm.Context)  {
 	)
 	api = append(api, model.Format{
 		Method: "get",
-		API: "/search?q=?&type=?",
+		API: "/api/search?q=?&type=?",
 		Params: "q=?(string)&type=?(article/user)",
 	})
 	c.JSON(api, nil)
