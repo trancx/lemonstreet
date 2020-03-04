@@ -49,19 +49,6 @@
       depends_on:
         - verify
 
-    login:
-      image: alpine:latest
-      container_name: lemon-login
-      ports:
-        - 8004:8000
-      environment:
-        - DISCOVERY_NODES=lemon-disc:7171
-      volumes:
-        - login-data-volume:/mnt
-      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-acc:8000' -c './cmd -conf configs/'"
-      depends_on:
-        - account
-
     comment:
       image: alpine:latest
       container_name: lemon-cmt
@@ -74,6 +61,19 @@
       command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-vrf:9000' -c './cmd -conf configs/'"
       depends_on:
         - verify
+
+    login:
+      image: alpine:latest
+      container_name: lemon-login
+      ports:
+        - 8004:8000
+      environment:
+        - DISCOVERY_NODES=lemon-disc:7171
+      volumes:
+        - login-data-volume:/mnt
+      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-acc:8000' -c './cmd -conf configs/'"
+      depends_on:
+        - account
 
     article:
       image: alpine:latest

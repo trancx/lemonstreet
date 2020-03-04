@@ -15,3 +15,9 @@ type LoginInfo struct {
 	Tel string `json:"tel"`
 	Sms string `json:"sms"`
 }
+
+type Format struct {
+	Method string	`json:"method"`
+	API string	`json:"api"`
+	Params interface{}	`json:"params"`
+}

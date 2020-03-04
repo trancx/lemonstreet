@@ -3,6 +3,7 @@ package http
 import (
 	"github.com/bilibili/kratos/pkg/ecode"
 	"net/http"
+	"search/internal/model"
 	"search/internal/service"
 	"strings"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/bilibili/kratos/pkg/conf/paladin"
 	"github.com/bilibili/kratos/pkg/log"
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
-	"search/internal/model"
 )
 
 var (
@@ -42,6 +42,19 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
 	e.GET("/search", search)
+	e.GET("api/search/format", format)
+}
+
+func format(c *bm.Context)  {
+	var (
+		api []model.Format
+	)
+	api = append(api, model.Format{
+		Method: "get",
+		API: "/search?q=?&type=?",
+		Params: "q=?(string)&type=?(article/user)",
+	})
+	c.JSON(api, nil)
 }
 
 func search(c *bm.Context)  {
@@ -76,12 +89,4 @@ func ping(ctx *bm.Context) {
 		log.Error("ping error(%v)", err)
 		ctx.AbortWithStatus(http.StatusServiceUnavailable)
 	}
-}
-
-// example for http request handler.
-func howToStart(c *bm.Context) {
-	k := &model.Kratos{
-		Hello: "Golang 大法好 !!!",
-	}
-	c.JSON(k, nil)
 }
