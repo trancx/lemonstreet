@@ -29,16 +29,11 @@ func (s *Service) LatestArticles(ctx context.Context, in *artapi.TimeReq) (*arta
 	var (
 		err error
 		infos []*artapi.ArticleBaseInfo
-		res		[]artapi.ArticleBaseInfo
 	)
-	res, err = s.dao.RawArticleBaseInfoByDate(ctx, in.Beg, in.End)
+	infos, err = s.dao.RawArticleBaseInfoByDate(ctx, in.Beg, in.End)
 	if err != nil {
 		err = ecode.NothingFound
 		return nil, err
-	}
-	// Ugly code!!!
-	for _, temp := range res {
-		infos = append(infos, &temp)
 	}
 	return &artapi.ArticleBaseInfosReply{
 		Infos:                infos,

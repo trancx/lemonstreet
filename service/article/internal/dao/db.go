@@ -146,7 +146,7 @@ func (d *Dao) RawArticleBaseInfoByAId(c context.Context, aid int64) (info *artap
 	return
 }
 
-func (d *Dao) RawArticleBaseInfoByDate(c context.Context, beg int64, end int64) (infos []artapi.ArticleBaseInfo, err error) {
+func (d *Dao) RawArticleBaseInfoByDate(c context.Context, beg int64, end int64) (infos []*artapi.ArticleBaseInfo, err error) {
 	var (
 		rows *sql.Rows
 	)
@@ -158,7 +158,7 @@ func (d *Dao) RawArticleBaseInfoByDate(c context.Context, beg int64, end int64) 
 	}
 
 	for rows.Next() {
-		temp := artapi.ArticleBaseInfo{}
+		temp := new(artapi.ArticleBaseInfo)
 		err = rows.Scan(&temp.Aid, &temp.Author, &temp.Uid, &temp.Title, &temp.Desc, &temp.Date)
 		if err != nil {
 			// FIXME: processing error?
@@ -170,7 +170,7 @@ func (d *Dao) RawArticleBaseInfoByDate(c context.Context, beg int64, end int64) 
 	// FIXME: cache 是否会因为重复的 id 而出错
 	d.cache.Do(c, func(ctx context.Context) {
 		for _, temp := range infos {
-			d.AddCacheABI(c, temp.Aid, &temp)
+			d.AddCacheABI(c, temp.Aid, temp)
 		}
 	})
 
