@@ -7,6 +7,7 @@ import (
 	"login/api/vrfapi"
 	"login/internal/service"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/bilibili/kratos/pkg/conf/paladin"
@@ -25,7 +26,17 @@ var (
 	loginSvc *service.Service
 	accRPC	accapi.AccountClient /* interface */
 	v		 *vrfapi.Verify
+	cms = map[int]string{
+		0: "ok",
+		-601: "Sms check fail",
+		-602: "Too many times",
+		-603: "User dosn't login",
+	}
 )
+
+func initEcode()  {
+	ecode.Register(cms)
+}
 
 func New(s *service.Service) (engine *bm.Engine, err error) {
 	var (
@@ -54,7 +65,7 @@ func initRouter(e *bm.Engine) {
 	g := e.Group("/api")
 	{
 		g.POST("/login", login)
-		g.POST("/logout", logout)
+		g.POST("/logout", logout)  // verify middleware FIXME
 		g.GET("/login/format", format)
 	}
 }
@@ -67,11 +78,13 @@ func format(c *bm.Context) {
 		Method: "post",
 		API: "/api/login",
 		Params: &model.LoginInfo{},
+		Errs:cms,
 	})
 	api = append(api, model.Format{
 		Method: "post",
 		API: "/api/loout",
 		Params: nil,
+		Errs:cms,
 	})
 	c.JSON(api, nil)
 }
@@ -104,6 +117,10 @@ func login(c *bm.Context) {
 	}
 
 	// sms check smsRPC.verify(...)
+	if len(params.Tel) != 11 || len(params.Sms) != 6 || !strings.HasSuffix(params.Tel, params.Sms) {
+		c.JSON(nil, ecode.Int(-601))
+		return
+	}
 
 	// user rpc
 	reply, err := accRPC.BaseInfoByTel(c, &accapi.TelReq{
@@ -122,10 +139,17 @@ func login(c *bm.Context) {
 		return
 	}
 	genCookies(c, _defaultCookieName, fmt.Sprintf("uid=%d&token=%s", uid, token))
-
 	c.JSON(reply.Info, nil)
 }
 
 func logout(c *bm.Context) {
- 	// del cookie
+	var (
+		err error
+	)
+	uid, _ := c.Get("uid")
+	if _, err = v.GenToken(c, uid.(int64)); err != nil {
+		c.JSON(nil, err)
+		return
+	}
+	c.JSON(nil, nil)
 }

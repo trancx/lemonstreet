@@ -45,11 +45,11 @@ func New() *Verify {
 // 3. Required Login
 // 4. GetCookies Data
 // 5. Verify Valid? (Save caches, etc... ) Yes go on,  ELSE refuse connection
-// FIXME: LOG!!!!
+// FIXME: LOG and Change on the token
 func (v *Verify) verify(ctx *bm.Context) error {
 	var (
 		uid     int64
-		token 	string
+		ctoken 	string
 		req     *TokenReq
 		err     error
 		cookies *http.Cookie
@@ -58,21 +58,30 @@ func (v *Verify) verify(ctx *bm.Context) error {
 	if cookies, err = ctx.Request.Cookie(_defaultCookieName); err != nil {
 		return ecode.AccessDenied
 	}
-	if _, err = fmt.Sscanf(cookies.Value, "%d&%s", &uid, &token); err != nil {
+	if _, err = fmt.Sscanf(cookies.Value, "%d&%s", &uid, &ctoken); err != nil {
 		return ecode.AccessDenied
 	}
 
 	req = &TokenReq{
 		Tk: &Token{
 			Id:  uid,
-			Key: token,
+			Key: ctoken,
 		},
 	}
+
 	v.lock.RLock()
 	token, ok := v.keys[uid]
 	v.lock.RUnlock()
 
-	if !ok {
+	if ok {
+		if strings.EqualFold(ctoken, token) {
+			ctx.Set("uid", uid)
+			return nil
+		}
+	}
+
+	// not found or not equal
+	{
 		reply, err := v.client.VrfKey(ctx, req)
 		if err != nil {
 			// FIXME: RPC error
@@ -81,12 +90,13 @@ func (v *Verify) verify(ctx *bm.Context) error {
 		if reply.IsValid {
 			// means token is right one and we can cached it!
 			v.lock.Lock()
-			v.keys[uid] = cookies.Value // RPC will return nil, when invalid, see gRPC handler
+			v.keys[uid] = ctoken // RPC will return nil, when invalid, see gRPC handler
 			v.lock.Unlock()
 			ctx.Set("uid", uid)
 			return nil
 		} else {
 			// if reply.IsUpdated, not the right one, but we can cached it
+			// for logout 这里会有一个循环，不正确就会确认一次。。
 			v.lock.Lock()
 			v.keys[uid] = reply.Tk.Key
 			v.lock.Unlock()
@@ -94,12 +104,6 @@ func (v *Verify) verify(ctx *bm.Context) error {
 		}
 		// unreachable!!!
 	}
-	// cached hit
-	if !strings.EqualFold(cookies.Value, token) {
-		return ecode.AccessDenied
-	}
-	ctx.Set("uid", uid)
-	return nil
 }
 
 func (v *Verify) Verify(ctx *bm.Context) {

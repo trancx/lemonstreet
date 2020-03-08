@@ -112,19 +112,6 @@
         - search-data-volume:/mnt
       command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-art:8000' -c './cmd -conf configs/'"
 
-    nginx:
-      image: nginx:latest
-      container_name: lemon-ngx
-      ports:
-        - 7999:80
-      volumes:
-        - ngx-res-volume:/usr/share/nginx/html
-        - /mnt/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
-        - ngx-log-volume:/var/log/nginx
-      restart: always
-      depends_on:
-        - search
-
   volumes:
     ngx-res-volume:
       external: true
