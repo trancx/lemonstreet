@@ -71,7 +71,7 @@
         - DISCOVERY_NODES=lemon-disc:7171
       volumes:
         - login-data-volume:/mnt
-      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-acc:8000' -c './cmd -conf configs/'"
+      command: /bin/sh -c "cd /mnt && sh wait-for-it.sh -d 'lemon-acc:9000' -c './cmd -conf configs/'"
       depends_on:
         - account
 
@@ -119,13 +119,14 @@
         - 7999:80
       volumes:
         - ngx-res-volume:/usr/share/nginx/html
-        - ngx-conf-volume:/etc/nginx/conf
+        - /mnt/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
         - ngx-log-volume:/var/log/nginx
+      restart: always
+      depends_on:
+        - search
 
   volumes:
     ngx-res-volume:
-      external: true
-    ngx-conf-volume:
       external: true
     ngx-log-volume:
       external: true

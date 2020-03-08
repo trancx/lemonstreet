@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"github.com/bilibili/kratos/pkg/conf/env"
 	"github.com/bilibili/kratos/pkg/naming"
 	"github.com/bilibili/kratos/pkg/naming/discovery"
@@ -39,6 +40,7 @@ func New(svc pb.VerifyServer) (ws *warden.Server, cancel context.CancelFunc, err
 		panic(err)
 	}
 	wardenPort = strings.Split(rc.Server.Addr, ":")[1]
+	fmt.Println("wadenpot = "+ wardenPort)
 	ins := &naming.Instance {
 		Zone:     env.Zone,
 		Env:      env.DeployEnv,
