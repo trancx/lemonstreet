@@ -65,7 +65,7 @@ func initRouter(e *bm.Engine) {
 	g := e.Group("/api")
 	{
 		g.POST("/login", login)
-		g.POST("/logout", logout)  // verify middleware FIXME
+		g.POST("/logout", v.Verify, logout)  // verify middleware FIXME
 		g.GET("/login/format", format)
 	}
 }
@@ -99,6 +99,19 @@ func genCookies(c *bm.Context, name string, value string) {
 	}
 	cookie.MaxAge = _defaultCookieLifeTime
 	cookie.Expires = time.Now().Add(time.Duration(_defaultCookieLifeTime) * time.Second)
+	http.SetCookie(c.Writer, cookie)
+}
+
+func delCookies(c *bm.Context, name string) {
+	var (
+		cookie *http.Cookie
+		err error
+	)
+	if cookie, err = c.Request.Cookie(name); err != nil {
+		return
+	}
+	cookie.Value = "nil"
+	cookie.MaxAge = 0
 	http.SetCookie(c.Writer, cookie)
 }
 
@@ -148,8 +161,10 @@ func logout(c *bm.Context) {
 	)
 	uid, _ := c.Get("uid")
 	if _, err = v.GenToken(c, uid.(int64)); err != nil {
+		log.Error("Token invalid (%v)", err)
 		c.JSON(nil, err)
 		return
 	}
+	delCookies(c, _defaultCookieName)
 	c.JSON(nil, nil)
 }

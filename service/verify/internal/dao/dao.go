@@ -16,7 +16,7 @@ import (
 //go:generate kratos tool genbts
 // Dao dao interface
 type Dao interface {
-	// bts: -nullcache=&vrfapi.Token{} -check_null_code=$!=nil
+	// bts: -nullcache=&vrfapi.Token{} -check_null_code=$!=nil&&$.Id==-1
 	GetKey(c context.Context, id int64) (key *vrfapi.Token, err error)
 	InsertKey(c context.Context, key *vrfapi.Token) error
 	UpdateKey(c context.Context, key *vrfapi.Token) error

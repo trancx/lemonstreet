@@ -4,7 +4,7 @@
   Package dao is a generated cache proxy package.
   It is generated from:
   type Dao interface {
-		// bts: -nullcache=&vrfapi.Token{} -check_null_code=$!=nil
+		// bts: -nullcache=&vrfapi.Token{} -check_null_code=$!=nil&&$.Id==-1
 		GetKey(c context.Context, id int64) (key *vrfapi.Token, err error)
 		InsertKey(c context.Context, key *vrfapi.Token) error
 		UpdateKey(c context.Context, key *vrfapi.Token) error
@@ -30,7 +30,7 @@ func (d *dao) GetKey(c context.Context, id int64) (res *vrfapi.Token, err error)
 		err = nil
 	}
 	defer func() {
-		if res != nil {
+		if res != nil && res.Id == -1 {
 			res = nil
 		}
 	}()

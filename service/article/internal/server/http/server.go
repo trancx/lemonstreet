@@ -33,7 +33,7 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 		err = nil
 	}
 	artSvc = s
-	//verify = v.New()
+	verify = v.New()
 	engine = bm.DefaultServer(hc.Server)
 	initRouter(engine)
 	err = engine.Start()
@@ -42,7 +42,7 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 
 func initRouter(e *bm.Engine) {
 	//e.Ping(ping)
-	g := e.Group("/api", test)
+	g := e.Group("/api", verify.Verify)
 	{
 		g.POST("/article", postArticle)
 		g.GET("/article", getArticle)

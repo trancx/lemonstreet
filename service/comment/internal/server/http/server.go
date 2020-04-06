@@ -30,7 +30,7 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 		err = nil
 	}
 	cmtSvc = s
-	//verify = v.New()
+	verify = v.New()
 	engine = bm.DefaultServer(hc.Server)
 	initRouter(engine)
 	err = engine.Start()
@@ -47,7 +47,7 @@ func initRouter(e *bm.Engine) {
 	//{
 	//	g.GET("/start", howToStart)
 	//}
-	g := e.Group("/api", test)
+	g := e.Group("/api", verify.Verify)
 	{
 		//g.GET("/:user/:title/comments") handle by RPC
 		g.POST("/comment", postComment) // verify
@@ -104,6 +104,8 @@ func postComment(c *bm.Context) {
 	cmm.Content = params.Content
 	cmm.Aid = params.AId
 	cmm.Uid = uid.(int64)
+	// FIXME: aid validation!!!
+	// and it can delay!
 	if err := cmtSvc.PostComment(c, cmm); err != nil {
 		c.JSON(nil, err)
 	} else {

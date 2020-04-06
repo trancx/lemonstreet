@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"github.com/bilibili/kratos/pkg/log"
 
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 	"github.com/bilibili/kratos/pkg/net/rpc/warden"
@@ -56,12 +57,14 @@ func (v *Verify) verify(ctx *bm.Context) error {
 	)
 
 	if cookies, err = ctx.Request.Cookie(_defaultCookieName); err != nil {
+		log.Error("Cookie Invalid")
 		return ecode.AccessDenied
 	}
-	if _, err = fmt.Sscanf(cookies.Value, "%d&%s", &uid, &ctoken); err != nil {
+	if _, err = fmt.Sscanf(cookies.Value, "uid=%d&token=%s", &uid, &ctoken); err != nil {
+		log.Error("Cookie Value Invalid")
 		return ecode.AccessDenied
 	}
-
+	log.Info("uid = %d, token=%s", uid, ctoken)
 	req = &TokenReq{
 		Tk: &Token{
 			Id:  uid,
@@ -85,7 +88,8 @@ func (v *Verify) verify(ctx *bm.Context) error {
 		reply, err := v.client.VrfKey(ctx, req)
 		if err != nil {
 			// FIXME: RPC error
-			return ecode.AccessDenied
+			log.Error("RPC error")
+			return ecode.ServerErr
 		}
 		if reply.IsValid {
 			// means token is right one and we can cached it!
@@ -100,6 +104,7 @@ func (v *Verify) verify(ctx *bm.Context) error {
 			v.lock.Lock()
 			v.keys[uid] = reply.Tk.Key
 			v.lock.Unlock()
+			log.Error("Token Invalid")
 			return ecode.AccessDenied
 		}
 		// unreachable!!!
@@ -130,6 +135,10 @@ func (v *Verify) GenToken(c context.Context, id int64) (token string, err error)
 		return
 	}
 	token = rpl.Tk.Key
+	// update key cache
+	v.lock.Lock()
+	v.keys[id] = token
+	v.lock.Unlock()
 	return
 }
 

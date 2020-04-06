@@ -2,7 +2,7 @@ target	:=	cmd/cmd
 PHONY	:= 	all
 service :=  	login
 ifeq ($(target), $(wildcard $(target)))
-update := $(shell find . -name '*.go' -newer cmd/cmd | sed 's/\.\///g' | grep go)
+update := $(shell find -L . -name '*.go' -newer cmd/cmd | sed 's/\.\///g' | grep go)
 endif
 
 ifdef PROJECT_NAME

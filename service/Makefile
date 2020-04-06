@@ -1,5 +1,5 @@
 PROJECT_NAME	:=  lemonstreet
-DOCKER_VOLUME_DIR := /mnt
+DOCKER_VOLUME_DIR := $(shell pwd)/mnt
 DB_VOLUME	:= $(DOCKER_VOLUME_DIR)/$(PROJECT_NAME)/db
 
 DISC_VOLUME	:= $(DOCKER_VOLUME_DIR)/discovery
