@@ -15,7 +15,7 @@
 		// mc: -key=keyABI -expire=d.demoExpire
 		AddCacheABI(c context.Context, id int64, art *model.Article) (err error)
 		// mc: -key=keyABI
-		DeleteABI(c context.Context, id int64) (err error)
+		DeleteABICache(c context.Context, id int64) (err error)
 	}
 */
 
@@ -109,15 +109,15 @@ func (d *Dao) AddCacheABI(c context.Context, id int64, val *artapi.ArticleBaseIn
 	return
 }
 
-// DeleteABI delete data from mc
-func (d *Dao) DeleteABI(c context.Context, id int64) (err error) {
+// DeleteABICache delete data from mc
+func (d *Dao) DeleteABICache(c context.Context, id int64) (err error) {
 	key := keyABI(id)
 	if err = d.mc.Delete(c, key); err != nil {
 		if err == memcache.ErrNotFound {
 			err = nil
 			return
 		}
-		log.Errorv(c, log.KV("DeleteABI", fmt.Sprintf("%+v", err)), log.KV("key", key))
+		log.Errorv(c, log.KV("DeleteABICache", fmt.Sprintf("%+v", err)), log.KV("key", key))
 		return
 	}
 	return

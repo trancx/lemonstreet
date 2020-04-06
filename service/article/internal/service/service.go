@@ -107,6 +107,36 @@ func (s *Service) PostArticle(c context.Context, info *artapi.ArticleBaseInfo, c
 	return
 }
 
+func (s *Service) DeleteArticle(c context.Context, aid int64, uid int64) (err error) {
+	var (
+		abi	*artapi.ArticleBaseInfo
+		//art *model.Article
+		//cmtRpl *cmt.CommentsReply = nil
+	)
+
+	abi, err = s.dao.ArticleBaseInfoByAId(c, aid) // cache it!
+	if err != nil {
+		// malicious action, mark it!
+		err = ecode.NothingFound
+		return err
+	}
+
+	if abi.Uid != uid {
+		// malicious action, mark it!
+		err = ecode.AccessDenied
+		return  err
+	}
+
+	// now we can delete it
+	err = s.dao.DeleteArticle(c, aid)
+	if err != nil {
+		return err
+	}
+
+	// delete commment, FIXME: comment RPC
+	return nil
+}
+
 // generate comments
 func (s *Service) GetArticleAnnms(c context.Context, aid int64) (*model.ArticleInfo, error) {
 	var (

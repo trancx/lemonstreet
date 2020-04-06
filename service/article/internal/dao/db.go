@@ -3,6 +3,7 @@ package dao
 import (
 	"article/api/artapi"
 	"context"
+	"github.com/bilibili/kratos/pkg/ecode"
 	"github.com/prometheus/common/log"
 
 	"article/internal/model"
@@ -175,4 +176,38 @@ func (d *Dao) RawArticleBaseInfoByDate(c context.Context, beg int64, end int64) 
 	})
 
 	return
+}
+
+const (
+	_delArticle = "DELETE from `article` where `aid`=?"
+	_delABI = "DELETE from `art_baseinfo` where `aid`=?"
+)
+
+func (d *Dao) DeleteArticle(c context.Context, aid int64) error {
+	// service layer has cached it
+	// or use tx
+	d.DeleteABICache(c, aid)
+	d.DeleteArticleCache(c, aid)
+
+	tx, err := d.db.Begin(c)
+	if err != nil {
+		log.Errorf("db begin transcation failed(%v)", err)
+		return ecode.ServerErr
+	}
+	_, err = tx.Exec(_delArticle, aid)
+	if err != nil && err != sql.ErrNoRows {
+		log.Errorf("article delete failed(%v)", err)
+		return ecode.ServerErr
+	}
+	_, err = tx.Exec(_delABI, aid)
+	if err != nil && err != sql.ErrNoRows {
+		log.Errorf("article baseinfo delete failed(%v)", err)
+		return ecode.ServerErr
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.Error("db commit transcation failed(%v)", err)
+	}
+
+	return nil
 }

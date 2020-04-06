@@ -46,7 +46,7 @@ func initRouter(e *bm.Engine) {
 	{
 		g.POST("/article", postArticle)
 		g.GET("/article", getArticle)
-
+		g.DELETE("/article", delArticle)
 		g.GET("/article/format", format)
 	}
 
@@ -75,6 +75,19 @@ func format(c *bm.Context) {
 	})
 
 	c.JSON(apis, nil)
+}
+
+func delArticle(c *bm.Context)  {
+	var (
+		params struct{
+			Aid int64	`json:"aid"`
+		}
+	)
+	if err := c.BindWith(&params, binding.JSON); err != nil {
+		return
+	}
+	uid, _ := c.Get("uid")
+	c.JSON(nil, artSvc.DeleteArticle(c, params.Aid, uid.(int64)))
 }
 
 // 1. anounymous
