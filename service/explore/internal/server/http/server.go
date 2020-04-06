@@ -39,8 +39,12 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	e.GET("/explore", explore)
-	e.GET("/api/explore/format", format)
+	g := e.Group("/api")
+	{
+		g.GET("/explore", explore)
+		g.GET("/explore/format", format)
+	}
+
 }
 
 func ping(ctx *bm.Context) {
@@ -59,7 +63,7 @@ func format(c *bm.Context)  {
 	)
 	apis := model.Format{
 		Method: "get",
-		API:    "/explore",
+		API:    "/api/explore",
 		Params: &period,
 	}
 	c.JSON(apis, nil)

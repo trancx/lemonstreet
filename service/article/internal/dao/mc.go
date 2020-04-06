@@ -24,7 +24,7 @@ type _mc interface {
 	// mc: -key=keyABI -expire=d.demoExpire
 	AddCacheABI(c context.Context, id int64, art *artapi.ArticleBaseInfo) (err error)
 	// mc: -key=keyABI
-	DeleteABI(c context.Context, id int64) (err error)
+	DeleteABICache(c context.Context, id int64) (err error)
 }
 
 func NewMC() (mc *memcache.Memcache, err error) {

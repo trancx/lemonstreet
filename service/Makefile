@@ -3,7 +3,7 @@ DOCKER_VOLUME_DIR := $(shell pwd)/mnt
 DB_VOLUME	:= $(DOCKER_VOLUME_DIR)/$(PROJECT_NAME)/db
 
 DISC_VOLUME	:= $(DOCKER_VOLUME_DIR)/discovery
-DISCOVERY	:= #FILLME
+DISCOVERY	:= 
 
 NGX_VOLUME	:= $(DOCKER_VOLUME_DIR)/nginx
 
@@ -11,6 +11,7 @@ NGX_VOLUME	:= $(DOCKER_VOLUME_DIR)/nginx
 service_dirs	:=  account/ article/ comment/ explore/ login/ search/ verify/
 services	:=  $(patsubst %/, %, $(service_dirs))
 targets		:=  $(patsubst %/, %/cmd/cmd, $(service_dirs))	
+dtargets	:=  $(patsubst %/, $(DOCKER_VOLUME_DIR)/$(PROJECT_NAME)/%, $(service_dirs))
 
 PHONY := all
 Q := @
@@ -27,6 +28,7 @@ all: $(services) $(DB_VOLUME) $(DISC_VOLUME) $(NGX_VOLUME)
 
 $(services): FORCE
 	$(Q)$(MAKE) -C $@ all
+	$(Q)chmod 777 $(targets)
 	
 # build DB
 $(DB_VOLUME):
@@ -48,7 +50,11 @@ $(NGX_VOLUME):
 
 PHONY += clean
 clean:
-	$(Q)rm $(targets)
+	$(Q)rm -rf $(targets)
+
+PHONY += d_clean
+d_clean:
+	$(Q)rm -rf $(dtargets)
 
 PHONY += FORCE
 FORCE:

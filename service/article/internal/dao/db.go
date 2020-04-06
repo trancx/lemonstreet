@@ -3,6 +3,7 @@ package dao
 import (
 	"article/api/artapi"
 	"context"
+	"github.com/bilibili/kratos/pkg/ecode"
 	"github.com/prometheus/common/log"
 
 	"article/internal/model"
@@ -146,7 +147,7 @@ func (d *Dao) RawArticleBaseInfoByAId(c context.Context, aid int64) (info *artap
 	return
 }
 
-func (d *Dao) RawArticleBaseInfoByDate(c context.Context, beg int64, end int64) (infos []artapi.ArticleBaseInfo, err error) {
+func (d *Dao) RawArticleBaseInfoByDate(c context.Context, beg int64, end int64) (infos []*artapi.ArticleBaseInfo, err error) {
 	var (
 		rows *sql.Rows
 	)
@@ -158,7 +159,7 @@ func (d *Dao) RawArticleBaseInfoByDate(c context.Context, beg int64, end int64) 
 	}
 
 	for rows.Next() {
-		temp := artapi.ArticleBaseInfo{}
+		temp := new(artapi.ArticleBaseInfo)
 		err = rows.Scan(&temp.Aid, &temp.Author, &temp.Uid, &temp.Title, &temp.Desc, &temp.Date)
 		if err != nil {
 			// FIXME: processing error?
@@ -170,9 +171,43 @@ func (d *Dao) RawArticleBaseInfoByDate(c context.Context, beg int64, end int64) 
 	// FIXME: cache 是否会因为重复的 id 而出错
 	d.cache.Do(c, func(ctx context.Context) {
 		for _, temp := range infos {
-			d.AddCacheABI(c, temp.Aid, &temp)
+			d.AddCacheABI(c, temp.Aid, temp)
 		}
 	})
 
 	return
+}
+
+const (
+	_delArticle = "DELETE from `article` where `aid`=?"
+	_delABI = "DELETE from `art_baseinfo` where `aid`=?"
+)
+
+func (d *Dao) DeleteArticle(c context.Context, aid int64) error {
+	// service layer has cached it
+	// or use tx
+	d.DeleteABICache(c, aid)
+	d.DeleteArticleCache(c, aid)
+
+	tx, err := d.db.Begin(c)
+	if err != nil {
+		log.Errorf("db begin transcation failed(%v)", err)
+		return ecode.ServerErr
+	}
+	_, err = tx.Exec(_delArticle, aid)
+	if err != nil && err != sql.ErrNoRows {
+		log.Errorf("article delete failed(%v)", err)
+		return ecode.ServerErr
+	}
+	_, err = tx.Exec(_delABI, aid)
+	if err != nil && err != sql.ErrNoRows {
+		log.Errorf("article baseinfo delete failed(%v)", err)
+		return ecode.ServerErr
+	}
+
+	if err = tx.Commit(); err != nil {
+		log.Error("db commit transcation failed(%v)", err)
+	}
+
+	return nil
 }

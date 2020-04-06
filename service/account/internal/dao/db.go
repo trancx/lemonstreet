@@ -10,11 +10,10 @@ import (
 )
 
 const (
-	_selUserInfoID = "SELECT uid,name,tel,mail,gender,avatar,description,created FROM user WHERE uid=? "
-	_selUserInfoTel = "SELECT uid,name,tel,mail,gender,avatar,description,created FROM user WHERE tel=? "
-	_selUserInfoName = "SELECT uid,name,tel,mail,gender,avatar,description,created FROM user WHERE name=?"
-
-	_searchUserName = "SELECT * from user where name like ?" // %str%
+	_selUserInfoID = "SELECT uid,ifnull(`name`, ''),tel,ifnull(`mail`, ''),ifnull(`gender`, ''),ifnull(`avatar`, ''),ifnull(`description`, ''),created FROM user WHERE uid=?"
+	_selUserInfoTel = "SELECT uid,ifnull(`name`, ''),tel,ifnull(`mail`, ''),ifnull(`gender`, ''),ifnull(`avatar`, ''),ifnull(`description`, ''),created FROM user WHERE tel=? "
+	_selUserInfoName = "SELECT uid,ifnull(`name`, ''),tel,ifnull(`mail`, ''),ifnull(`gender`, ''),ifnull(`avatar`, ''),ifnull(`description`, ''),created FROM user WHERE name=?"
+	_searchUserName = "SELECT uid,ifnull(`name`, ''),tel,ifnull(`mail`, ''),ifnull(`gender`, ''),ifnull(`avatar`, ''),ifnull(`description`, ''),created FROM user WHERE name like ?" // %str%
 
 )
 

@@ -2,14 +2,17 @@ target	:=	cmd/cmd
 PHONY	:= 	all
 service :=  	login
 ifeq ($(target), $(wildcard $(target)))
-update := $(shell find . -name '*.go' -newer cmd/cmd | sed 's/\.\///g' | grep go)
+update := $(shell find -L . -name '*.go' -newer cmd/cmd | sed 's/\.\///g' | grep go)
 endif
 
 ifdef PROJECT_NAME
 ifdef DOCKER_VOLUME_DIR
 volume_dir := $(DOCKER_VOLUME_DIR)/$(PROJECT_NAME)/$(service)
+dtarget := $(DOCKER_VOLUME_DIR)/$(PROJECT_NAME)/$(service)/cmd
 
-all: $(target) $(volume_dir)
+all: $(dtarget)
+
+$(dtarget): $(target) $(volume_dir)
 	$(Q)cp -fr $(target) configs/ -t $(volume_dir)
 
 ifeq ($(update),) 

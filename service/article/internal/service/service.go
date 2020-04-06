@@ -29,16 +29,11 @@ func (s *Service) LatestArticles(ctx context.Context, in *artapi.TimeReq) (*arta
 	var (
 		err error
 		infos []*artapi.ArticleBaseInfo
-		res		[]artapi.ArticleBaseInfo
 	)
-	res, err = s.dao.RawArticleBaseInfoByDate(ctx, in.Beg, in.End)
+	infos, err = s.dao.RawArticleBaseInfoByDate(ctx, in.Beg, in.End)
 	if err != nil {
 		err = ecode.NothingFound
 		return nil, err
-	}
-	// Ugly code!!!
-	for _, temp := range res {
-		infos = append(infos, &temp)
 	}
 	return &artapi.ArticleBaseInfosReply{
 		Infos:                infos,
@@ -110,6 +105,36 @@ func (s *Service) PostArticle(c context.Context, info *artapi.ArticleBaseInfo, c
 	err = s.dao.PostArticle(c, info, content)
 	// handle error
 	return
+}
+
+func (s *Service) DeleteArticle(c context.Context, aid int64, uid int64) (err error) {
+	var (
+		abi	*artapi.ArticleBaseInfo
+		//art *model.Article
+		//cmtRpl *cmt.CommentsReply = nil
+	)
+
+	abi, err = s.dao.ArticleBaseInfoByAId(c, aid) // cache it!
+	if err != nil {
+		// malicious action, mark it!
+		err = ecode.NothingFound
+		return err
+	}
+
+	if abi.Uid != uid {
+		// malicious action, mark it!
+		err = ecode.AccessDenied
+		return  err
+	}
+
+	// now we can delete it
+	err = s.dao.DeleteArticle(c, aid)
+	if err != nil {
+		return err
+	}
+
+	// delete commment, FIXME: comment RPC
+	return nil
 }
 
 // generate comments

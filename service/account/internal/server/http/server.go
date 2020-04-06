@@ -36,7 +36,7 @@ func New(s *service.Service) (engine *bm.Engine, err error) {
 		err = nil
 	}
 	accSvc = s
-	//verify = v.New()
+	verify = v.New()
 	engine = bm.DefaultServer(hc.Server)
 	// pb.RegisterDemoBMServer(engine, s) 这里可以算是适配 protoc 的中间层
 	initRouter(engine)
@@ -51,7 +51,7 @@ func test(c *bm.Context) {
 // domain/[:username]
 func initRouter(e *bm.Engine) {
 	e.Ping(ping)
-	g := e.Group("/api/account", test)	// FIXME  tourist or not? , verify.Verify
+	g := e.Group("/api/account", verify.Verify)	// FIXME  tourist or not? , verify.Verify
 	{
 		g.GET("/format", format)
 		g.GET("/info", getUserInfo)
@@ -94,7 +94,6 @@ func getUserInfo(c *bm.Context) {
 		info struct{
 			UId int64  	`json:"uid"`
 		}
-
 	)
 	uid, exist := c.Get("uid")
 

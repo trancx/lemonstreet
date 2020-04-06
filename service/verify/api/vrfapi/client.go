@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"github.com/bilibili/kratos/pkg/log"
 
 	bm "github.com/bilibili/kratos/pkg/net/http/blademaster"
 	"github.com/bilibili/kratos/pkg/net/rpc/warden"
@@ -45,61 +46,69 @@ func New() *Verify {
 // 3. Required Login
 // 4. GetCookies Data
 // 5. Verify Valid? (Save caches, etc... ) Yes go on,  ELSE refuse connection
-// FIXME: LOG!!!!
+// FIXME: LOG and Change on the token
 func (v *Verify) verify(ctx *bm.Context) error {
 	var (
 		uid     int64
-		token 	string
+		ctoken 	string
 		req     *TokenReq
 		err     error
 		cookies *http.Cookie
 	)
 
 	if cookies, err = ctx.Request.Cookie(_defaultCookieName); err != nil {
+		log.Error("Cookie Invalid")
 		return ecode.AccessDenied
 	}
-	if _, err = fmt.Sscanf(cookies.Value, "%d&%s", &uid, &token); err != nil {
+	if _, err = fmt.Sscanf(cookies.Value, "uid=%d&token=%s", &uid, &ctoken); err != nil {
+		log.Error("Cookie Value Invalid")
 		return ecode.AccessDenied
 	}
-
+	log.Info("uid = %d, token=%s", uid, ctoken)
 	req = &TokenReq{
 		Tk: &Token{
 			Id:  uid,
-			Key: token,
+			Key: ctoken,
 		},
 	}
+
 	v.lock.RLock()
 	token, ok := v.keys[uid]
 	v.lock.RUnlock()
 
-	if !ok {
+	if ok {
+		if strings.EqualFold(ctoken, token) {
+			ctx.Set("uid", uid)
+			return nil
+		}
+	}
+
+	// not found or not equal
+	{
 		reply, err := v.client.VrfKey(ctx, req)
 		if err != nil {
 			// FIXME: RPC error
-			return ecode.AccessDenied
+			log.Error("RPC error")
+			return ecode.ServerErr
 		}
 		if reply.IsValid {
 			// means token is right one and we can cached it!
 			v.lock.Lock()
-			v.keys[uid] = cookies.Value // RPC will return nil, when invalid, see gRPC handler
+			v.keys[uid] = ctoken // RPC will return nil, when invalid, see gRPC handler
 			v.lock.Unlock()
 			ctx.Set("uid", uid)
 			return nil
 		} else {
 			// if reply.IsUpdated, not the right one, but we can cached it
+			// for logout 这里会有一个循环，不正确就会确认一次。。
 			v.lock.Lock()
 			v.keys[uid] = reply.Tk.Key
 			v.lock.Unlock()
+			log.Error("Token Invalid")
 			return ecode.AccessDenied
 		}
 		// unreachable!!!
 	}
-	// cached hit
-	if !strings.EqualFold(cookies.Value, token) {
-		return ecode.AccessDenied
-	}
-	ctx.Set("uid", uid)
-	return nil
 }
 
 func (v *Verify) Verify(ctx *bm.Context) {
@@ -126,6 +135,10 @@ func (v *Verify) GenToken(c context.Context, id int64) (token string, err error)
 		return
 	}
 	token = rpl.Tk.Key
+	// update key cache
+	v.lock.Lock()
+	v.keys[id] = token
+	v.lock.Unlock()
 	return
 }
 

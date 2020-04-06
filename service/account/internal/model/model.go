@@ -37,14 +37,14 @@ type ParamUid struct {
 } 
 
 type UserInfo struct {
-	 UserID 		int64
-	 Name			string
-	 Tel			string
-	 Mail			string
-	 Gender 		string
-	 Avatar			string
-	 Description	string
-	 CreatedDate	string
+	 UserID 		int64	`json:"uid"`
+	 Name			string 	`json:"name"`
+	 Tel			string	`json:"tel"`
+	 Mail			string	`json:"mail"`
+	 Gender 		string	`json:"gender"`
+	 Avatar			string	`json:"avatar"`
+	 Description	string	`json:"description"`
+	 CreatedDate	string	`json:"created"`
 }
 
 func NewUser() *UserInfo{
